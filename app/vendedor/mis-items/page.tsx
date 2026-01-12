@@ -24,12 +24,18 @@ export default async function VendedorMisItemsPage({
     asignado_a: user.id, // Only show items assigned to this vendedor
   }
 
-  const items = await getItems(filters)
+  const pageSize = 25
+
+  const { items, count } = await getItems(filters, { offset: 0, limit: pageSize })
 
   return (
     <Layout>
-      <MisItemsClient items={items} filters={filters} />
+      <MisItemsClient
+        items={items}
+        filters={filters}
+        totalCount={count}
+        pageSize={pageSize}
+      />
     </Layout>
   )
 }
-

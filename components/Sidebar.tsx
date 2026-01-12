@@ -21,7 +21,7 @@ interface SidebarProps {
 function Sidebar({ isOpen, onToggle, isMounted }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const sidebarRef = useRef<HTMLElement>(null)
   
   // Initialize state - must match server render (no localStorage access)
@@ -138,7 +138,7 @@ function Sidebar({ isOpen, onToggle, isMounted }: SidebarProps) {
     return () => {
       isCancelled = true
     }
-  }, [isMounted])
+  }, [isMounted, supabase])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()

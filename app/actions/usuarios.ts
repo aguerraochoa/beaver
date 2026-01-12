@@ -6,20 +6,29 @@ import { requireAdmin } from '@/lib/utils/auth'
 import { Usuario, Rol } from '@/types/database'
 import { revalidatePath } from 'next/cache'
 
-export async function getUsuarios() {
+export async function getUsuarios(pagination?: { offset?: number; limit?: number }) {
   await requireAdmin()
   const supabase = await createClient()
 
-  const { data, error } = await supabase
+  const limit = pagination?.limit ?? 25
+  const offset = pagination?.offset ?? 0
+
+  let query = supabase
     .from('usuarios')
-    .select('*')
+    .select('*', { count: 'exact' })
     .order('creado_en', { ascending: false })
+
+  const from = offset
+  const to = offset + limit - 1
+  query = query.range(from, to)
+
+  const { data, error, count } = await query
 
   if (error) {
     throw new Error(`Error fetching usuarios: ${error.message}`)
   }
 
-  return data as Usuario[]
+  return { usuarios: data as Usuario[], count: count ?? data?.length ?? 0 }
 }
 
 export async function createUsuario(data: {

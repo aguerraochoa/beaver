@@ -4,7 +4,11 @@ import { getVentas } from '@/app/actions/ventas'
 import Layout from '@/components/Layout'
 import VentasClient from './VentasClient'
 
-export default async function VendedorVentasPage() {
+export default async function VendedorVentasPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
   const user = await getCurrentUser()
   if (!user) {
     redirect('/login')
@@ -14,12 +18,17 @@ export default async function VendedorVentasPage() {
     redirect('/')
   }
 
-  const ventas = await getVentas()
+  const pageSize = 25
+
+  const { ventas, count } = await getVentas(undefined, { offset: 0, limit: pageSize })
 
   return (
     <Layout>
-      <VentasClient ventas={ventas} />
+      <VentasClient
+        ventas={ventas}
+        totalCount={count}
+        pageSize={pageSize}
+      />
     </Layout>
   )
 }
-

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { getCurrentUser, requireAdmin } from '@/lib/utils/auth'
-import { getItems, assignItems } from '@/app/actions/items'
+import { getItems, getItemFilterOptions } from '@/app/actions/items'
 import { getUsuarios } from '@/app/actions/usuarios'
 import Layout from '@/components/Layout'
 import InventarioClient from './InventarioClient'
@@ -33,13 +33,24 @@ export default async function AdminInventarioPage({
     search: searchParams.search as string | undefined,
   }
 
-  const items = await getItems(filters)
-  const usuarios = await getUsuarios()
+  const pageSize = 25
+
+  const [{ items, count }, { usuarios }, filterOptions] = await Promise.all([
+    getItems(filters, { offset: 0, limit: pageSize }),
+    getUsuarios(),
+    getItemFilterOptions(),
+  ])
 
   return (
     <Layout>
-      <InventarioClient items={items} usuarios={usuarios} filters={filters} />
+      <InventarioClient
+        items={items}
+        usuarios={usuarios}
+        filters={filters}
+        totalCount={count}
+        pageSize={pageSize}
+        filterOptions={filterOptions}
+      />
     </Layout>
   )
 }
-

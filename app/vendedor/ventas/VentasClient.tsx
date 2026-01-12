@@ -1,6 +1,9 @@
 'use client'
 
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Venta } from '@/types/database'
+import { getVentas } from '@/app/actions/ventas'
 
 interface VentaWithRelations extends Venta {
   item?: any
@@ -9,9 +12,21 @@ interface VentaWithRelations extends Venta {
 
 interface VentasClientProps {
   ventas: VentaWithRelations[]
+  totalCount: number
+  pageSize: number
 }
 
-export default function VentasClient({ ventas }: VentasClientProps) {
+export default function VentasClient({ ventas: initialVentas, totalCount: initialTotalCount, pageSize }: VentasClientProps) {
+  const router = useRouter()
+  const [ventas, setVentas] = useState(initialVentas)
+  const [totalCount, setTotalCount] = useState(initialTotalCount)
+  const [loadingMore, setLoadingMore] = useState(false)
+
+  useEffect(() => {
+    setVentas(initialVentas)
+    setTotalCount(initialTotalCount)
+  }, [initialVentas, initialTotalCount])
+
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat('es-MX', {
       style: 'currency',
@@ -27,10 +42,30 @@ export default function VentasClient({ ventas }: VentasClientProps) {
     })
   }
 
+  const handleLoadMore = async () => {
+    if (loadingMore || ventas.length >= totalCount) return
+
+    setLoadingMore(true)
+    try {
+      const { ventas: newVentas, count } = await getVentas(undefined, {
+        offset: ventas.length,
+        limit: pageSize,
+      })
+      setVentas([...ventas, ...newVentas])
+      setTotalCount(count)
+    } catch (error: any) {
+      alert(`Error: ${error.message}`)
+    } finally {
+      setLoadingMore(false)
+    }
+  }
+
+  const hasMore = ventas.length < totalCount
+
   return (
     <div className="space-y-4 lg:space-y-6">
       <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-slate-100">
-        Mis Ventas ({ventas.length})
+        Mis Ventas ({totalCount})
       </h1>
 
       {/* Mobile Card Layout */}
@@ -57,7 +92,7 @@ export default function VentasClient({ ventas }: VentasClientProps) {
                     {venta.item?.objeto || venta.item?.identificador || venta.item_id.substring(0, 8)}
                   </p>
                 </div>
-                <span className={`px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2 ${getStatusColor(venta.estado)}`}>
+                <span className={`px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2 whitespace-nowrap ${getStatusColor(venta.estado)}`}>
                   {venta.estado}
                 </span>
               </div>
@@ -127,7 +162,7 @@ export default function VentasClient({ ventas }: VentasClientProps) {
                     {formatDate(venta.fecha_venta)}
                   </td>
                   <td className="px-6 py-4 text-sm">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(venta.estado)}`}>
+                    <span className={`px-2 py-1 rounded text-xs font-medium whitespace-nowrap ${getStatusColor(venta.estado)}`}>
                       {venta.estado}
                     </span>
                   </td>
@@ -147,7 +182,26 @@ export default function VentasClient({ ventas }: VentasClientProps) {
           </tbody>
         </table>
       </div>
+
+      {/* Load More */}
+      {hasMore && (
+        <div className="flex justify-center bg-white dark:bg-slate-800 rounded-lg lg:rounded-xl shadow px-4 py-3">
+          <button
+            onClick={handleLoadMore}
+            disabled={loadingMore}
+            className="px-6 py-2 bg-[#2d5a8a] hover:bg-[#1e3a5f] text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {loadingMore ? 'Cargando...' : `Cargar más (${ventas.length} de ${totalCount})`}
+          </button>
+        </div>
+      )}
+      {!hasMore && totalCount > 0 && (
+        <div className="flex justify-center bg-white dark:bg-slate-800 rounded-lg lg:rounded-xl shadow px-4 py-3">
+          <div className="text-sm text-slate-600 dark:text-slate-300">
+            Mostrando todos los {totalCount} resultados
+          </div>
+        </div>
+      )}
     </div>
   )
 }
-

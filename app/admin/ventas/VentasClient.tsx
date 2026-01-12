@@ -1,35 +1,76 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Venta } from '@/types/database'
+import { approveVenta, rejectVenta, getVentas } from '@/app/actions/ventas'
 
 interface VentaWithRelations extends Venta {
   item?: any
   vendedor?: any
   aprobado_por_usuario?: any
 }
-import { approveVenta, rejectVenta } from '@/app/actions/ventas'
 
 interface VentasClientProps {
   ventas: VentaWithRelations[]
   filters: any
+  totalCount: number
+  pageSize: number
 }
 
-export default function VentasClient({ ventas, filters }: VentasClientProps) {
+export default function VentasClient({ ventas: initialVentas, filters: initialFilters, totalCount: initialTotalCount, pageSize }: VentasClientProps) {
   const router = useRouter()
+  const [ventas, setVentas] = useState(initialVentas)
+  const [totalCount, setTotalCount] = useState(initialTotalCount)
+  const [filters, setFilters] = useState(initialFilters)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [processing, setProcessing] = useState<string | null>(null)
   const [filtersOpen, setFiltersOpen] = useState(false) // Mobile filters toggle
 
-  const handleFilterChange = (key: string, value: string) => {
+  useEffect(() => {
+    setVentas(initialVentas)
+    setTotalCount(initialTotalCount)
+    setFilters(initialFilters)
+  }, [initialVentas, initialTotalCount, initialFilters])
+
+  const basePath = '/admin/ventas'
+
+  const updateSearchParams = (mutate: (params: URLSearchParams) => void) => {
     const params = new URLSearchParams(window.location.search)
-    if (value) {
-      params.set(key, value)
-    } else {
-      params.delete(key)
-    }
-    router.push(`/admin/ventas?${params.toString()}`)
+    mutate(params)
+    const query = params.toString()
+    router.push(query ? `${basePath}?${query}` : basePath)
   }
+
+  const handleFilterChange = (key: string, value: string) => {
+    updateSearchParams((params) => {
+      if (value) {
+        params.set(key, value)
+      } else {
+        params.delete(key)
+      }
+    })
+  }
+
+  const handleLoadMore = async () => {
+    if (loadingMore || ventas.length >= totalCount) return
+
+    setLoadingMore(true)
+    try {
+      const { ventas: newVentas, count } = await getVentas(filters, {
+        offset: ventas.length,
+        limit: pageSize,
+      })
+      setVentas([...ventas, ...newVentas])
+      setTotalCount(count)
+    } catch (error: any) {
+      alert(`Error: ${error.message}`)
+    } finally {
+      setLoadingMore(false)
+    }
+  }
+
+  const hasMore = ventas.length < totalCount
 
   const handleApprove = async (ventaId: string) => {
     setProcessing(ventaId)
@@ -72,16 +113,18 @@ export default function VentasClient({ ventas, filters }: VentasClientProps) {
     })
   }
 
+
   return (
     <div className="space-y-4 lg:space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 lg:gap-4">
         <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-slate-100">
-          Ventas ({ventas.length})
+          Ventas ({totalCount})
         </h1>
         {/* Desktop Filter - Always visible */}
         <select
           value={filters.estado || ''}
           onChange={(e) => handleFilterChange('estado', e.target.value)}
+          aria-label="Filtrar por estado"
           className="hidden lg:block px-4 py-2 border rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
         >
           <option value="">Todos los estados</option>
@@ -96,6 +139,8 @@ export default function VentasClient({ ventas, filters }: VentasClientProps) {
         <button
           onClick={() => setFiltersOpen(!filtersOpen)}
           className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+          aria-expanded={filtersOpen}
+          aria-controls="ventas-filters"
         >
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,10 +158,11 @@ export default function VentasClient({ ventas, filters }: VentasClientProps) {
           </svg>
         </button>
         {filtersOpen && (
-          <div className="p-4 border-t border-gray-200 dark:border-slate-700">
+          <div id="ventas-filters" className="p-4 border-t border-gray-200 dark:border-slate-700">
             <select
               value={filters.estado || ''}
               onChange={(e) => handleFilterChange('estado', e.target.value)}
+              aria-label="Filtrar por estado"
               className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
             >
               <option value="">Todos los estados</option>
@@ -155,7 +201,7 @@ export default function VentasClient({ ventas, filters }: VentasClientProps) {
                     {venta.vendedor?.nombre || '-'}
                   </p>
                 </div>
-                <span className={`px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2 ${getStatusColor(venta.estado)}`}>
+                <span className={`px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2 whitespace-nowrap ${getStatusColor(venta.estado)}`}>
                   {venta.estado}
                 </span>
               </div>
@@ -263,7 +309,7 @@ export default function VentasClient({ ventas, filters }: VentasClientProps) {
                     {formatDate(venta.fecha_venta)}
                   </td>
                   <td className="px-6 py-4 text-sm">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(venta.estado)}`}>
+                    <span className={`px-2 py-1 rounded text-xs font-medium whitespace-nowrap ${getStatusColor(venta.estado)}`}>
                       {venta.estado}
                     </span>
                   </td>
@@ -314,7 +360,26 @@ export default function VentasClient({ ventas, filters }: VentasClientProps) {
           </tbody>
         </table>
       </div>
+
+      {/* Load More */}
+      {hasMore && (
+        <div className="flex justify-center bg-white dark:bg-slate-800 rounded-lg lg:rounded-xl shadow px-4 py-3">
+          <button
+            onClick={handleLoadMore}
+            disabled={loadingMore}
+            className="px-6 py-2 bg-[#2d5a8a] hover:bg-[#1e3a5f] text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {loadingMore ? 'Cargando...' : `Cargar más (${ventas.length} de ${totalCount})`}
+          </button>
+        </div>
+      )}
+      {!hasMore && totalCount > 0 && (
+        <div className="flex justify-center bg-white dark:bg-slate-800 rounded-lg lg:rounded-xl shadow px-4 py-3">
+          <div className="text-sm text-slate-600 dark:text-slate-300">
+            Mostrando todos los {totalCount} resultados
+          </div>
+        </div>
+      )}
     </div>
   )
 }
-

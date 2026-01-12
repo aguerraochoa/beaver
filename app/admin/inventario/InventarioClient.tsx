@@ -1,20 +1,40 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createPortal } from 'react-dom'
 import { Item, Usuario } from '@/types/database'
-import { assignItems, createItem, updateItem, deleteItem, splitItem } from '@/app/actions/items'
+import { assignItems, createItem, updateItem, deleteItem, splitItem, getItems } from '@/app/actions/items'
 import { exportItemsToCSV } from '@/app/actions/csv'
 
 interface InventarioClientProps {
   items: Item[]
   usuarios: Usuario[]
   filters: any
+  totalCount: number
+  pageSize: number
+  filterOptions: {
+    categorias: string[]
+    subcategorias: string[]
+    racks: string[]
+    condiciones: string[]
+    años: number[]
+  }
 }
 
-export default function InventarioClient({ items, usuarios, filters }: InventarioClientProps) {
+export default function InventarioClient({
+  items: initialItems,
+  usuarios,
+  filters: initialFilters,
+  totalCount: initialTotalCount,
+  pageSize,
+  filterOptions,
+}: InventarioClientProps) {
   const router = useRouter()
+  const [items, setItems] = useState<Item[]>(initialItems)
+  const [totalCount, setTotalCount] = useState(initialTotalCount)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [filters, setFilters] = useState(initialFilters)
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set())
   const [assigning, setAssigning] = useState(false)
   const [showAssignModal, setShowAssignModal] = useState(false)
@@ -39,22 +59,58 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
     estado: 'disponible',
   })
 
-  // Get unique values for filters
-  const categorias = useMemo(() => [...new Set(items.map(i => i.categoria).filter((c): c is string => Boolean(c)))], [items])
-  const subcategorias = useMemo(() => [...new Set(items.map(i => i.subcategoria).filter((s): s is string => Boolean(s)))], [items])
-  const racks = useMemo(() => [...new Set(items.map(i => i.rack).filter((r): r is string => Boolean(r)))], [items])
-  const condiciones = useMemo(() => [...new Set(items.map(i => i.condicion).filter((c): c is string => Boolean(c)))], [items])
-  const años = useMemo(() => [...new Set(items.map(i => i.año).filter((a): a is number => a !== null && a !== undefined))].sort((a, b) => b - a), [items])
+  // Reset items when filters change
+  useEffect(() => {
+    setItems(initialItems)
+    setTotalCount(initialTotalCount)
+    setFilters(initialFilters)
+  }, [initialItems, initialTotalCount, initialFilters])
+
+  const { categorias, subcategorias, racks } = filterOptions
+
+  const basePath = '/admin/inventario'
+
+  const updateSearchParams = useCallback((mutate: (params: URLSearchParams) => void) => {
+    const params = new URLSearchParams(window.location.search)
+    mutate(params)
+    const query = params.toString()
+    router.push(query ? `${basePath}?${query}` : basePath)
+  }, [router, basePath])
 
   const handleFilterChange = (key: string, value: string) => {
-    const params = new URLSearchParams(window.location.search)
-    if (value) {
-      params.set(key, value)
-    } else {
-      params.delete(key)
-    }
-    router.push(`/admin/inventario?${params.toString()}`)
+    updateSearchParams((params) => {
+      if (value) {
+        params.set(key, value)
+      } else {
+        params.delete(key)
+      }
+    })
   }
+
+  const handleLoadMore = async () => {
+    if (loadingMore || items.length >= totalCount) return
+    
+    setLoadingMore(true)
+    try {
+      const newFilters = { ...filters }
+      const { items: newItems, count } = await getItems(newFilters, {
+        offset: items.length,
+        limit: pageSize,
+      })
+      setItems([...items, ...newItems])
+      setTotalCount(count)
+    } catch (error: any) {
+      alert(`Error: ${error.message}`)
+    } finally {
+      setLoadingMore(false)
+    }
+  }
+
+  useEffect(() => {
+    setSelectedItems(new Set())
+  }, [items])
+
+  const hasMore = items.length < totalCount
 
   const handleSelectAll = () => {
     if (selectedItems.size === items.length) {
@@ -208,23 +264,78 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
     setMounted(true)
   }, [])
 
+  const closeAssignModal = useCallback(() => {
+    if (assigning) return
+    setShowAssignModal(false)
+    setSelectedVendedor('')
+  }, [assigning])
+
+  const closeItemModal = useCallback(() => {
+    if (saving) return
+    setShowItemModal(false)
+    setEditingItem(null)
+  }, [saving])
+
+  const closeSplitModal = useCallback(() => {
+    if (saving) return
+    setShowSplitModal(false)
+    setSplittingItem(null)
+    setSplitObjetos(['', ''])
+  }, [saving])
+
+  useEffect(() => {
+    if (!showAssignModal && !showItemModal && !showSplitModal) return
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      if (showItemModal) {
+        closeItemModal()
+        return
+      }
+      if (showAssignModal) {
+        closeAssignModal()
+        return
+      }
+      if (showSplitModal) {
+        closeSplitModal()
+      }
+    }
+
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [showAssignModal, showItemModal, showSplitModal, closeAssignModal, closeItemModal, closeSplitModal])
+
   // Modal content to be rendered via portal
   const modalContent = (
     <>
       {/* Assign Modal */}
       {showAssignModal && (
         <>
-          <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 z-[9999]" />
+          <div
+            className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 z-[9999]"
+            onClick={closeAssignModal}
+            aria-hidden="true"
+          />
           <div className="fixed top-0 left-0 w-screen h-screen z-[9999] flex items-center justify-center p-4 pointer-events-none">
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6 w-full max-w-md pointer-events-auto">
-              <h2 className="text-2xl font-bold mb-4">Asignar Items</h2>
-              <p className="text-slate-600 dark:text-slate-400 mb-4">
+            <div
+              className="bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6 w-full max-w-md pointer-events-auto"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="assign-items-title"
+              aria-describedby="assign-items-desc"
+              tabIndex={-1}
+            >
+              <h2 id="assign-items-title" className="text-2xl font-bold mb-4">
+                Asignar Items
+              </h2>
+              <p id="assign-items-desc" className="text-slate-600 dark:text-slate-400 mb-4">
                 Asignar {selectedItems.size} item(s) a un vendedor
               </p>
               <select
                 value={selectedVendedor}
                 onChange={(e) => setSelectedVendedor(e.target.value)}
                 className="w-full px-4 py-2 border rounded-lg mb-4"
+                autoFocus
               >
                 <option value="">Seleccionar vendedor</option>
                 {vendedores.map(v => (
@@ -240,10 +351,7 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
                   {assigning ? 'Asignando...' : 'Asignar'}
                 </button>
                 <button
-                  onClick={() => {
-                    setShowAssignModal(false)
-                    setSelectedVendedor('')
-                  }}
+                  onClick={closeAssignModal}
                   className="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-semibold"
                 >
                   Cancelar
@@ -257,10 +365,20 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
       {/* Create/Edit Item Modal */}
       {showItemModal && (
         <>
-          <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 z-[9999]" />
+          <div
+            className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 z-[9999]"
+            onClick={closeItemModal}
+            aria-hidden="true"
+          />
           <div className="fixed top-0 left-0 w-screen h-screen z-[9999] flex items-center justify-center p-4 overflow-y-auto pointer-events-none">
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6 w-full max-w-2xl my-8 pointer-events-auto">
-              <h2 className="text-2xl font-bold mb-4">
+            <div
+              className="bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6 w-full max-w-2xl my-8 pointer-events-auto"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="item-modal-title"
+              tabIndex={-1}
+            >
+              <h2 id="item-modal-title" className="text-2xl font-bold mb-4">
                 {editingItem ? 'Editar Item' : 'Crear Item'}
               </h2>
               <form onSubmit={handleSaveItem} className="space-y-4">
@@ -275,6 +393,7 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
                       onChange={(e) => setFormData({ ...formData, identificador: e.target.value || null })}
                       className="w-full px-4 py-2 border rounded-lg"
                       placeholder="ABC-001"
+                      autoFocus
                     />
                   </div>
                   <div>
@@ -399,10 +518,7 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      setShowItemModal(false)
-                      setEditingItem(null)
-                    }}
+                    onClick={closeItemModal}
                     className="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-semibold"
                   >
                     Cancelar
@@ -417,13 +533,28 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
       {/* Split Modal */}
       {showSplitModal && splittingItem && (
         <>
-          <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 z-[9999]" />
+          <div
+            className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 z-[9999]"
+            onClick={closeSplitModal}
+            aria-hidden="true"
+          />
           <div className="fixed top-0 left-0 w-screen h-screen z-[9999] flex items-center justify-center p-4 pointer-events-none">
-            <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6 pointer-events-auto">
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">Dividir Item</h2>
+            <div
+              className="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6 pointer-events-auto"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="split-item-title"
+              aria-describedby="split-item-desc"
+              tabIndex={-1}
+            >
+              <h2 id="split-item-title" className="text-2xl font-bold text-slate-900 mb-4">
+                Dividir Item
+              </h2>
               
               <div className="mb-4">
-                <p className="text-sm text-slate-600 mb-2">Objeto original:</p>
+                <p id="split-item-desc" className="text-sm text-slate-600 mb-2">
+                  Objeto original:
+                </p>
                 <p className="text-base font-medium text-slate-900 bg-slate-50 p-3 rounded-lg">
                   {splittingItem.objeto || '-'}
                 </p>
@@ -446,6 +577,7 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
                       }}
                       placeholder={`Objeto ${index + 1}`}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
+                      autoFocus={index === 0}
                     />
                   ))}
                 </div>
@@ -460,11 +592,7 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
 
               <div className="flex gap-3 justify-end">
                 <button
-                  onClick={() => {
-                    setShowSplitModal(false)
-                    setSplittingItem(null)
-                    setSplitObjetos(['', ''])
-                  }}
+                  onClick={closeSplitModal}
                   className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
                 >
                   Cancelar
@@ -489,7 +617,7 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
       {/* Header - Mobile optimized */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 lg:gap-4">
         <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-slate-100">
-          Inventario ({items.length} items)
+          Inventario ({totalCount} items)
         </h1>
         <div className="flex gap-2 w-full sm:w-auto">
           <button
@@ -536,6 +664,8 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
         <button
           onClick={() => setFiltersOpen(!filtersOpen)}
           className="lg:hidden w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+          aria-expanded={filtersOpen}
+          aria-controls="inventario-filters"
         >
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -554,18 +684,20 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
         </button>
 
         {/* Filter Content */}
-        <div className={`${filtersOpen ? 'block' : 'hidden'} lg:block p-3 lg:p-4`}>
+        <div id="inventario-filters" className={`${filtersOpen ? 'block' : 'hidden'} lg:block p-3 lg:p-4`}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 lg:gap-4">
             <input
               type="text"
               placeholder="Buscar..."
               value={filters.search || ''}
               onChange={(e) => handleFilterChange('search', e.target.value)}
+              aria-label="Buscar items"
               className="px-3 py-2 border rounded-lg text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
             />
             <select
               value={filters.estado || ''}
               onChange={(e) => handleFilterChange('estado', e.target.value)}
+              aria-label="Filtrar por estado"
               className="px-3 py-2 border rounded-lg text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
             >
               <option value="">Todos los estados</option>
@@ -577,6 +709,7 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
             <select
               value={filters.categoria || ''}
               onChange={(e) => handleFilterChange('categoria', e.target.value)}
+              aria-label="Filtrar por categoría"
               className="px-3 py-2 border rounded-lg text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
             >
               <option value="">Todas las categorías</option>
@@ -587,6 +720,7 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
             <select
               value={filters.subcategoria || ''}
               onChange={(e) => handleFilterChange('subcategoria', e.target.value)}
+              aria-label="Filtrar por subcategoría"
               className="px-3 py-2 border rounded-lg text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
             >
               <option value="">Todas las subcategorías</option>
@@ -597,6 +731,7 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
             <select
               value={filters.rack || ''}
               onChange={(e) => handleFilterChange('rack', e.target.value)}
+              aria-label="Filtrar por rack"
               className="px-3 py-2 border rounded-lg text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
             >
               <option value="">Todos los racks</option>
@@ -607,6 +742,7 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
             <select
               value={filters.asignado_a || ''}
               onChange={(e) => handleFilterChange('asignado_a', e.target.value)}
+              aria-label="Filtrar por vendedor"
               className="px-3 py-2 border rounded-lg text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
             >
               <option value="">Todos los vendedores</option>
@@ -669,7 +805,7 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
                     </p>
                   </div>
                 </div>
-                <span className={`px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ${getStatusColor(item.estado)}`}>
+                <span className={`px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 whitespace-nowrap ${getStatusColor(item.estado)}`}>
                   {item.estado.replace('_', ' ')}
                 </span>
               </div>
@@ -790,7 +926,7 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
                     {item.categoria || '-'} {item.subcategoria && `/ ${item.subcategoria}`}
                   </td>
                   <td className="px-6 py-4 text-sm">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(item.estado)}`}>
+                    <span className={`px-2 py-1 rounded text-xs font-medium whitespace-nowrap ${getStatusColor(item.estado)}`}>
                       {item.estado.replace('_', ' ')}
                     </span>
                   </td>
@@ -841,9 +977,28 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
         </table>
       </div>
 
+      {/* Load More */}
+      {hasMore && (
+        <div className="flex justify-center bg-white dark:bg-slate-800 rounded-lg lg:rounded-xl shadow px-4 py-3">
+          <button
+            onClick={handleLoadMore}
+            disabled={loadingMore}
+            className="px-6 py-2 bg-[#2d5a8a] hover:bg-[#1e3a5f] text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {loadingMore ? 'Cargando...' : `Cargar más (${items.length} de ${totalCount})`}
+          </button>
+        </div>
+      )}
+      {!hasMore && totalCount > 0 && (
+        <div className="flex justify-center bg-white dark:bg-slate-800 rounded-lg lg:rounded-xl shadow px-4 py-3">
+          <div className="text-sm text-slate-600 dark:text-slate-300">
+            Mostrando todos los {totalCount} resultados
+          </div>
+        </div>
+      )}
+
       {/* Render modals via portal to escape parent overflow constraints */}
       {mounted && typeof window !== 'undefined' && createPortal(modalContent, document.body)}
     </div>
   )
 }
-

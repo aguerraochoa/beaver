@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
@@ -8,9 +8,13 @@ export default function ResetPasswordPage() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState<{ text: string; type: 'error' | 'success' } | null>(null)
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
+
+  const setMessageText = useCallback((text: string, type: 'error' | 'success') => {
+    setMessage({ text, type })
+  }, [])
 
   useEffect(() => {
     // Check if we have a valid session with a password reset token
@@ -24,7 +28,7 @@ export default function ResetPasswordPage() {
       }
     }
     checkSession()
-  }, [router, supabase.auth])
+  }, [router, supabase])
 
   const validatePassword = (pwd: string): string | null => {
     if (pwd.length < 6) {
@@ -37,17 +41,17 @@ export default function ResetPasswordPage() {
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setMessage('')
+    setMessage(null)
 
     if (password !== confirmPassword) {
-      setMessage('Passwords do not match')
+      setMessageText('Passwords do not match', 'error')
       setLoading(false)
       return
     }
 
     const passwordError = validatePassword(password)
     if (passwordError) {
-      setMessage(passwordError)
+      setMessageText(passwordError, 'error')
       setLoading(false)
       return
     }
@@ -57,10 +61,10 @@ export default function ResetPasswordPage() {
     })
 
     if (error) {
-      setMessage(error.message)
+      setMessageText(error.message, 'error')
       setLoading(false)
     } else {
-      setMessage('Password reset successful! Redirecting to login...')
+      setMessageText('Password reset successful! Redirecting to login...', 'success')
       setTimeout(() => {
         router.push('/login?reset=success')
       }, 2000)
@@ -133,16 +137,15 @@ export default function ResetPasswordPage() {
         {message && (
           <div
             className={`p-3 rounded-lg text-sm ${
-              message.includes('failed') || message.includes('error') || message.includes('not match') || message.includes('at least')
+              message.type === 'error'
                 ? 'bg-red-50 text-red-800 dark:bg-red-900/20 dark:text-red-400'
                 : 'bg-green-50 text-green-800 dark:bg-green-900/20 dark:text-green-400'
             }`}
           >
-            {message}
+            {message.text}
           </div>
         )}
       </div>
     </div>
   )
 }
-

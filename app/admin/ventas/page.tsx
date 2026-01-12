@@ -24,12 +24,18 @@ export default async function AdminVentasPage({
     estado: searchParams.estado as string | undefined,
   }
 
-  const ventas = await getVentas(filters)
+  const pageSize = 25
+
+  const { ventas, count } = await getVentas(filters, { offset: 0, limit: pageSize })
 
   return (
     <Layout>
-      <VentasClient ventas={ventas} filters={filters} />
+      <VentasClient
+        ventas={ventas}
+        filters={filters}
+        totalCount={count}
+        pageSize={pageSize}
+      />
     </Layout>
   )
 }
-

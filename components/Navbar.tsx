@@ -2,12 +2,12 @@
 
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
 
 export default function Navbar() {
   const router = useRouter()
-  const supabase = createClient()
-  const [user, setUser] = useState<any>(null)
+  const supabase = useMemo(() => createClient(), [])
   const [usuario, setUsuario] = useState<any>(null)
 
   useEffect(() => {
@@ -17,7 +17,6 @@ export default function Navbar() {
       } = await supabase.auth.getUser()
 
       if (authUser) {
-        setUser(authUser)
         const { data: usuarioData } = await supabase
           .from('usuarios')
           .select('*')
@@ -68,13 +67,13 @@ export default function Navbar() {
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               {getNavLinks().map((link) => (
-                <a
+                <Link
                   key={link.href}
                   href={link.href}
                   className="border-transparent text-blue-200 hover:border-blue-300 hover:text-white dark:text-slate-400 dark:hover:text-slate-200 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
             </div>
           </div>
@@ -98,4 +97,3 @@ export default function Navbar() {
     </nav>
   )
 }
-

@@ -257,7 +257,7 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
                         {sale.vendedor_nombre}
                       </p>
                     </div>
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2 ${getStatusColor(sale.estado)}`}>
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2 whitespace-nowrap ${getStatusColor(sale.estado)}`}>
                       {sale.estado}
                     </span>
                   </div>
@@ -311,7 +311,7 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
                         {formatCurrency(sale.precio, sale.moneda)}
                       </td>
                       <td className="px-6 py-4 text-sm whitespace-nowrap">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(sale.estado)}`}>
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getStatusColor(sale.estado)}`}>
                           {sale.estado}
                         </span>
                       </td>

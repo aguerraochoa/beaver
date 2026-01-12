@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { getEmailFromUsernameOrEmail, isUsernameAvailable, createUsuarioAfterSignup } from '@/app/actions/auth'
@@ -8,7 +8,7 @@ import { getEmailFromUsernameOrEmail, isUsernameAvailable, createUsuarioAfterSig
 export default function LoginPage() {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
   const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState<{ text: string; type: 'error' | 'info' | 'success' } | null>(null)
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [nombre, setNombre] = useState('')
@@ -18,7 +18,17 @@ export default function LoginPage() {
   const [resetEmail, setResetEmail] = useState('')
   const [resetLoading, setResetLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
+
+  const setMessageText = useCallback((text: string, type: 'error' | 'info' | 'success' = 'info') => {
+    setMessage({ text, type })
+  }, [])
+
+  const closeForgotPassword = useCallback(() => {
+    setShowForgotPassword(false)
+    setResetEmail('')
+    setMessage(null)
+  }, [])
 
   // Check for error/status in URL params first, then check if user is logged in
   useEffect(() => {
@@ -29,29 +39,30 @@ export default function LoginPage() {
     const reset = urlParams.get('reset')
     
     if (error === 'auth_failed') {
-      setMessage(
+      setMessageText(
         details
           ? `Authentication failed: ${details}`
-          : 'Authentication failed. Please check your Supabase redirect URL configuration.'
+          : 'Authentication failed. Please check your Supabase redirect URL configuration.',
+        'error'
       )
       window.history.replaceState({}, '', '/login')
     } else if (error === 'session_failed') {
-      setMessage('Session creation failed. Please try again.')
+      setMessageText('Session creation failed. Please try again.', 'error')
       window.history.replaceState({}, '', '/login')
     } else if (error === 'email_not_verified') {
-      setMessage(details || 'Please verify your email before signing in.')
+      setMessageText(details || 'Please verify your email before signing in.', 'error')
       window.history.replaceState({}, '', '/login')
     } else if (verified === 'true') {
-      setMessage('Email verified successfully! Redirecting...')
+      setMessageText('Email verified successfully! Redirecting...', 'success')
       window.history.replaceState({}, '', '/login')
     } else if (verified === 'false') {
-      setMessage('Email verification failed. Please try again or request a new verification email.')
+      setMessageText('Email verification failed. Please try again or request a new verification email.', 'error')
       window.history.replaceState({}, '', '/login')
     } else if (reset === 'success') {
-      setMessage('Password reset successful! You can now sign in with your new password.')
+      setMessageText('Password reset successful! You can now sign in with your new password.', 'success')
       window.history.replaceState({}, '', '/login')
     }
-  }, [])
+  }, [setMessageText])
 
   // Check if user is already logged in
   useEffect(() => {
@@ -77,7 +88,20 @@ export default function LoginPage() {
       }
     }
     checkUser()
-  }, [router, supabase.auth])
+  }, [router, supabase])
+
+  useEffect(() => {
+    if (!showForgotPassword) return
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeForgotPassword()
+      }
+    }
+
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [showForgotPassword, closeForgotPassword])
 
   const validatePassword = (pwd: string): string | null => {
     if (pwd.length < 6) {
@@ -90,24 +114,24 @@ export default function LoginPage() {
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setMessage('')
+    setMessage(null)
 
     // Validate required fields
     if (!email || !username || !nombre) {
-      setMessage('Por favor completa todos los campos')
+      setMessageText('Por favor completa todos los campos', 'error')
       setLoading(false)
       return
     }
 
     if (password !== confirmPassword) {
-      setMessage('Las contraseñas no coinciden')
+      setMessageText('Las contraseñas no coinciden', 'error')
       setLoading(false)
       return
     }
 
     const passwordError = validatePassword(password)
     if (passwordError) {
-      setMessage(passwordError)
+      setMessageText(passwordError, 'error')
       setLoading(false)
       return
     }
@@ -115,14 +139,14 @@ export default function LoginPage() {
     // Check if username is available
     const usernameAvailable = await isUsernameAvailable(username)
     if (!usernameAvailable) {
-      setMessage('Este nombre de usuario ya está en uso')
+      setMessageText('Este nombre de usuario ya está en uso', 'error')
       setLoading(false)
       return
     }
 
     // Validate username format (alphanumeric, underscore, hyphen, 3-20 chars)
     if (!/^[a-zA-Z0-9_-]{3,20}$/.test(username)) {
-      setMessage('El nombre de usuario debe tener entre 3 y 20 caracteres y solo puede contener letras, números, guiones y guiones bajos')
+      setMessageText('El nombre de usuario debe tener entre 3 y 20 caracteres y solo puede contener letras, números, guiones y guiones bajos', 'error')
       setLoading(false)
       return
     }
@@ -145,15 +169,15 @@ export default function LoginPage() {
     })
 
     if (error) {
-      setMessage(error.message)
+      setMessageText(error.message, 'error')
       setLoading(false)
     } else if (data.user) {
       // Create usuario record with username
       try {
         await createUsuarioAfterSignup(data.user.id, nombre, username)
-        setMessage('Revisa tu email para verificar tu cuenta antes de iniciar sesión.')
+        setMessageText('Revisa tu email para verificar tu cuenta antes de iniciar sesión.', 'info')
       } catch (err: any) {
-        setMessage(`Error al crear perfil: ${err.message}`)
+        setMessageText(`Error al crear perfil: ${err.message}`, 'error')
       }
       setEmail('')
       setUsername('')
@@ -167,7 +191,7 @@ export default function LoginPage() {
   const handleEmailSignin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setMessage('')
+    setMessage(null)
 
     // Get email from username or email input
     const loginInput = email.trim().toLowerCase() // Reusing email field for username/email
@@ -177,13 +201,13 @@ export default function LoginPage() {
       actualEmail = await getEmailFromUsernameOrEmail(loginInput)
     } catch (err: any) {
       console.error('Error getting email from username:', err)
-      setMessage('Error al buscar usuario. Por favor intenta con tu email.')
+      setMessageText('Error al buscar usuario. Por favor intenta con tu email.', 'error')
       setLoading(false)
       return
     }
 
     if (!actualEmail) {
-      setMessage('Usuario o email no encontrado')
+      setMessageText('Usuario o email no encontrado', 'error')
       setLoading(false)
       return
     }
@@ -194,11 +218,11 @@ export default function LoginPage() {
     })
 
     if (error) {
-      setMessage(error.message)
+      setMessageText(error.message, 'error')
       setLoading(false)
     } else if (data.user) {
       if (!data.user.email_confirmed_at) {
-        setMessage('Por favor verifica tu email antes de iniciar sesión. Revisa tu bandeja de entrada.')
+        setMessageText('Por favor verifica tu email antes de iniciar sesión. Revisa tu bandeja de entrada.', 'error')
         await supabase.auth.signOut()
         setLoading(false)
       } else {
@@ -213,10 +237,10 @@ export default function LoginPage() {
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault()
     setResetLoading(true)
-    setMessage('')
+    setMessage(null)
 
     if (!resetEmail) {
-      setMessage('Please enter your email address')
+      setMessageText('Please enter your email address', 'error')
       setResetLoading(false)
       return
     }
@@ -226,10 +250,10 @@ export default function LoginPage() {
     })
 
     if (error) {
-      setMessage(error.message)
+      setMessageText(error.message, 'error')
       setResetLoading(false)
     } else {
-      setMessage('Check your email for a password reset link.')
+      setMessageText('Check your email for a password reset link.', 'info')
       setResetEmail('')
       setShowForgotPassword(false)
       setResetLoading(false)
@@ -255,7 +279,7 @@ export default function LoginPage() {
               type="button"
               onClick={() => {
                 setMode('signin')
-                setMessage('')
+                setMessage(null)
                 setEmail('')
                 setUsername('')
                 setNombre('')
@@ -274,7 +298,7 @@ export default function LoginPage() {
               type="button"
               onClick={() => {
                 setMode('signup')
-                setMessage('')
+                setMessage(null)
                 setEmail('')
                 setUsername('')
                 setNombre('')
@@ -440,14 +464,14 @@ export default function LoginPage() {
           {message && (
             <div
               className={`p-3 rounded-lg text-sm ${
-                message.includes('failed') || message.includes('error') || message.includes('not match') || message.includes('at least')
+                message.type === 'error'
                   ? 'bg-red-50 text-red-800 dark:bg-red-900/20 dark:text-red-400'
-                  : message.includes('Check your email') || message.includes('verify')
+                  : message.type === 'info'
                   ? 'bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
                   : 'bg-green-50 text-green-800 dark:bg-green-900/20 dark:text-green-400'
               }`}
             >
-              {message}
+              {message.text}
             </div>
           )}
         </div>
@@ -455,18 +479,30 @@ export default function LoginPage() {
 
       {/* Forgot Password Modal */}
       {showForgotPassword && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6 md:p-8 w-full max-w-md">
+        <>
+          <div
+            className="fixed inset-0 bg-black/50 z-50"
+            onClick={closeForgotPassword}
+            aria-hidden="true"
+          />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+            <div
+              className="bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6 md:p-8 w-full max-w-md pointer-events-auto"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="forgot-password-title"
+              aria-describedby="forgot-password-desc"
+              tabIndex={-1}
+            >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+              <h2
+                id="forgot-password-title"
+                className="text-2xl font-bold text-slate-900 dark:text-slate-100"
+              >
                 Restablecer Contraseña
               </h2>
               <button
-                onClick={() => {
-                  setShowForgotPassword(false)
-                  setResetEmail('')
-                  setMessage('')
-                }}
+                onClick={closeForgotPassword}
                 className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -475,7 +511,7 @@ export default function LoginPage() {
               </button>
             </div>
             
-            <p className="text-slate-600 dark:text-slate-400 mb-6">
+            <p id="forgot-password-desc" className="text-slate-600 dark:text-slate-400 mb-6">
               Ingresa tu dirección de email y te enviaremos un enlace para restablecer tu contraseña.
             </p>
 
@@ -491,6 +527,7 @@ export default function LoginPage() {
                   onChange={(e) => setResetEmail(e.target.value)}
                   required
                   disabled={resetLoading}
+                  autoFocus
                   className="w-full px-4 py-2 border-2 border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="tu@ejemplo.com"
                 />
@@ -516,11 +553,7 @@ export default function LoginPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    setShowForgotPassword(false)
-                    setResetEmail('')
-                    setMessage('')
-                  }}
+                  onClick={closeForgotPassword}
                   className="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-semibold hover:bg-slate-300 dark:hover:bg-slate-600 transition-all"
                 >
                   Cancelar
@@ -528,9 +561,9 @@ export default function LoginPage() {
               </div>
             </form>
           </div>
-        </div>
+          </div>
+        </>
       )}
     </div>
   )
 }
-

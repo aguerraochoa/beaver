@@ -5,13 +5,24 @@ import { requireAuth, requireAdmin } from '@/lib/utils/auth'
 import { Venta } from '@/types/database'
 import { revalidatePath } from 'next/cache'
 
-export async function getVentas(filters?: {
-  estado?: string
-  vendedor_id?: string
-}) {
+export async function getVentas(
+  filters?: {
+    estado?: string
+    vendedor_id?: string
+  },
+  pagination?: {
+    offset?: number
+    limit?: number
+  }
+) {
   await requireAuth()
   const supabase = await createClient()
   const isAdmin = await requireAdmin().then(() => true).catch(() => false)
+
+  const limit = pagination?.limit ?? 25
+  const offset = pagination?.offset ?? 0
+  const from = offset
+  const to = offset + limit - 1
 
   let query = supabase
     .from('ventas')
@@ -20,7 +31,7 @@ export async function getVentas(filters?: {
       item:items(*),
       vendedor:usuarios!ventas_vendedor_id_fkey(*),
       aprobado_por_usuario:usuarios!ventas_aprobado_por_fkey(*)
-    `)
+    `, { count: 'exact' })
     .order('creado_en', { ascending: false })
 
   // Apply RLS: vendedores only see their own ventas
@@ -36,13 +47,13 @@ export async function getVentas(filters?: {
     query = query.eq('vendedor_id', filters.vendedor_id)
   }
 
-  const { data, error } = await query
+  const { data, error, count } = await query.range(from, to)
 
   if (error) {
     throw new Error(`Error fetching ventas: ${error.message}`)
   }
 
-  return data as Venta[]
+  return { ventas: data as Venta[], count: count ?? 0 }
 }
 
 export async function getVentaById(ventaId: string) {
@@ -245,4 +256,3 @@ export async function rejectVenta(ventaId: string) {
   revalidatePath('/vendedor/ventas')
   return ventaData as Venta
 }
-

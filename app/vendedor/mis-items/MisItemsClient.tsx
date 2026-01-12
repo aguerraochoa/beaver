@@ -1,32 +1,74 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Item } from '@/types/database'
+import { getItems } from '@/app/actions/items'
 
 interface MisItemsClientProps {
   items: Item[]
   filters: any
+  totalCount: number
+  pageSize: number
 }
 
-export default function MisItemsClient({ items, filters }: MisItemsClientProps) {
+export default function MisItemsClient({ items: initialItems, filters: initialFilters, totalCount: initialTotalCount, pageSize }: MisItemsClientProps) {
   const router = useRouter()
+  const [items, setItems] = useState(initialItems)
+  const [totalCount, setTotalCount] = useState(initialTotalCount)
+  const [filters, setFilters] = useState(initialFilters)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [filtersOpen, setFiltersOpen] = useState(false) // Mobile filters toggle
 
-  const handleFilterChange = (key: string, value: string) => {
+  useEffect(() => {
+    setItems(initialItems)
+    setTotalCount(initialTotalCount)
+    setFilters(initialFilters)
+  }, [initialItems, initialTotalCount, initialFilters])
+
+  const basePath = '/vendedor/mis-items'
+
+  const updateSearchParams = (mutate: (params: URLSearchParams) => void) => {
     const params = new URLSearchParams(window.location.search)
-    if (value) {
-      params.set(key, value)
-    } else {
-      params.delete(key)
-    }
-    router.push(`/vendedor/mis-items?${params.toString()}`)
+    mutate(params)
+    const query = params.toString()
+    router.push(query ? `${basePath}?${query}` : basePath)
   }
+
+  const handleFilterChange = (key: string, value: string) => {
+    updateSearchParams((params) => {
+      if (value) {
+        params.set(key, value)
+      } else {
+        params.delete(key)
+      }
+    })
+  }
+
+  const handleLoadMore = async () => {
+    if (loadingMore || items.length >= totalCount) return
+
+    setLoadingMore(true)
+    try {
+      const { items: newItems, count } = await getItems(filters, {
+        offset: items.length,
+        limit: pageSize,
+      })
+      setItems([...items, ...newItems])
+      setTotalCount(count)
+    } catch (error: any) {
+      alert(`Error: ${error.message}`)
+    } finally {
+      setLoadingMore(false)
+    }
+  }
+
+  const hasMore = items.length < totalCount
 
   return (
     <div className="space-y-4 lg:space-y-6">
       <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-slate-100">
-        Mis Items ({items.length})
+        Mis Items ({totalCount})
       </h1>
 
       {/* Filters - Mobile optimized with collapsible */}
@@ -35,6 +77,8 @@ export default function MisItemsClient({ items, filters }: MisItemsClientProps) 
         <button
           onClick={() => setFiltersOpen(!filtersOpen)}
           className="lg:hidden w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+          aria-expanded={filtersOpen}
+          aria-controls="mis-items-filters"
         >
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -53,18 +97,20 @@ export default function MisItemsClient({ items, filters }: MisItemsClientProps) 
         </button>
 
         {/* Filter Content */}
-        <div className={`${filtersOpen ? 'block' : 'hidden'} lg:block p-3 lg:p-4`}>
+        <div id="mis-items-filters" className={`${filtersOpen ? 'block' : 'hidden'} lg:block p-3 lg:p-4`}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
             <input
               type="text"
               placeholder="Buscar..."
               value={filters.search || ''}
               onChange={(e) => handleFilterChange('search', e.target.value)}
+              aria-label="Buscar items asignados"
               className="px-3 py-2 border rounded-lg text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
             />
             <select
               value={filters.estado || ''}
               onChange={(e) => handleFilterChange('estado', e.target.value)}
+              aria-label="Filtrar por estado"
               className="px-3 py-2 border rounded-lg text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
             >
               <option value="">Todos los estados</option>
@@ -105,7 +151,7 @@ export default function MisItemsClient({ items, filters }: MisItemsClientProps) 
                     ID: {item.identificador || item.item_id.substring(0, 8)}
                   </p>
                 </div>
-                <span className={`px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2 ${getStatusColor(item.estado)}`}>
+                <span className={`px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2 whitespace-nowrap ${getStatusColor(item.estado)}`}>
                   {item.estado.replace('_', ' ')}
                 </span>
               </div>
@@ -182,7 +228,7 @@ export default function MisItemsClient({ items, filters }: MisItemsClientProps) 
                     {item.categoria || '-'} {item.subcategoria && `/ ${item.subcategoria}`}
                   </td>
                   <td className="px-6 py-4 text-sm">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(item.estado)}`}>
+                    <span className={`px-2 py-1 rounded text-xs font-medium whitespace-nowrap ${getStatusColor(item.estado)}`}>
                       {item.estado.replace('_', ' ')}
                     </span>
                   </td>
@@ -205,7 +251,26 @@ export default function MisItemsClient({ items, filters }: MisItemsClientProps) 
           </tbody>
         </table>
       </div>
+
+      {/* Load More */}
+      {hasMore && (
+        <div className="flex justify-center bg-white dark:bg-slate-800 rounded-lg lg:rounded-xl shadow px-4 py-3">
+          <button
+            onClick={handleLoadMore}
+            disabled={loadingMore}
+            className="px-6 py-2 bg-[#2d5a8a] hover:bg-[#1e3a5f] text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {loadingMore ? 'Cargando...' : `Cargar más (${items.length} de ${totalCount})`}
+          </button>
+        </div>
+      )}
+      {!hasMore && totalCount > 0 && (
+        <div className="flex justify-center bg-white dark:bg-slate-800 rounded-lg lg:rounded-xl shadow px-4 py-3">
+          <div className="text-sm text-slate-600 dark:text-slate-300">
+            Mostrando todos los {totalCount} resultados
+          </div>
+        </div>
+      )}
     </div>
   )
 }
-

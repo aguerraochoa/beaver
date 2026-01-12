@@ -5,20 +5,31 @@ import { requireAuth, requireAdmin } from '@/lib/utils/auth'
 import { Item } from '@/types/database'
 import { revalidatePath } from 'next/cache'
 
-export async function getItems(filters?: {
-  categoria?: string
-  subcategoria?: string
-  estado?: string
-  rack?: string
-  nivel?: number
-  condicion?: string
-  año?: number
-  asignado_a?: string
-  search?: string
-}) {
+export async function getItems(
+  filters?: {
+    categoria?: string
+    subcategoria?: string
+    estado?: string
+    rack?: string
+    nivel?: number
+    condicion?: string
+    año?: number
+    asignado_a?: string
+    search?: string
+  },
+  pagination?: {
+    offset?: number
+    limit?: number
+  }
+) {
   await requireAuth()
   const supabase = await createClient()
   const isAdmin = await requireAdmin().then(() => true).catch(() => false)
+
+  const limit = pagination?.limit ?? 25
+  const offset = pagination?.offset ?? 0
+  const from = offset
+  const to = offset + limit - 1
 
   let query = supabase
     .from('items')
@@ -26,7 +37,7 @@ export async function getItems(filters?: {
       *,
       asignado_a_usuario:usuarios!items_asignado_a_fkey(*),
       creado_por_usuario:usuarios!items_creado_por_fkey(*)
-    `)
+    `, { count: 'exact' })
     .order('creado_en', { ascending: false })
 
   // Apply RLS: vendedores only see assigned items
@@ -63,13 +74,57 @@ export async function getItems(filters?: {
     query = query.or(`objeto.ilike.%${filters.search}%,identificador.ilike.%${filters.search}%,item_id.eq.${filters.search}`)
   }
 
-  const { data, error } = await query
+  const { data, error, count } = await query.range(from, to)
 
   if (error) {
     throw new Error(`Error fetching items: ${error.message}`)
   }
 
-  return data as Item[]
+  return { items: data as Item[], count: count ?? 0 }
+}
+
+export async function getItemFilterOptions() {
+  await requireAdmin()
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('items')
+    .select('categoria, subcategoria, rack, condicion, año')
+
+  if (error) {
+    throw new Error(`Error fetching item filters: ${error.message}`)
+  }
+
+  const categorias = new Set<string>()
+  const subcategorias = new Set<string>()
+  const racks = new Set<string>()
+  const condiciones = new Set<string>()
+  const años = new Set<number>()
+
+  type FilterRow = {
+    categoria: string | null
+    subcategoria: string | null
+    rack: string | null
+    condicion: string | null
+    año: number | null
+  }
+
+  const rows = (data as unknown) as FilterRow[] | null
+  for (const row of rows ?? []) {
+    if (row.categoria) categorias.add(row.categoria)
+    if (row.subcategoria) subcategorias.add(row.subcategoria)
+    if (row.rack) racks.add(row.rack)
+    if (row.condicion) condiciones.add(row.condicion)
+    if (row.año !== null && row.año !== undefined) años.add(row.año)
+  }
+
+  return {
+    categorias: Array.from(categorias).sort((a, b) => a.localeCompare(b)),
+    subcategorias: Array.from(subcategorias).sort((a, b) => a.localeCompare(b)),
+    racks: Array.from(racks).sort((a, b) => a.localeCompare(b)),
+    condiciones: Array.from(condiciones).sort((a, b) => a.localeCompare(b)),
+    años: Array.from(años).sort((a, b) => b - a),
+  }
 }
 
 export async function getItemById(itemId: string) {
@@ -287,4 +342,3 @@ export async function splitItem(
   revalidatePath('/admin/inventario')
   return { success: true, count: newItems.length }
 }
-
