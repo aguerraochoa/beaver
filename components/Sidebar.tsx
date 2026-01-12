@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState, useMemo, memo, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface NavItem {
   href: string
@@ -254,9 +255,18 @@ function Sidebar({ isOpen, onToggle, isMounted }: SidebarProps) {
       >
         {/* Header */}
         <div className="flex items-center h-16 border-b border-[#2d5a8a] flex-shrink-0 justify-between px-4">
-          <h1 className="text-xl font-bold text-white whitespace-nowrap">
-            Beaver
-          </h1>
+          <div className="flex items-center gap-2">
+            <Image
+              src="/icon.svg"
+              alt="Beaver Logo"
+              width={32}
+              height={32}
+              className="flex-shrink-0"
+            />
+            <h1 className="text-xl font-bold text-white whitespace-nowrap">
+              Beaver
+            </h1>
+          </div>
           {/* Close button - only visible on mobile via CSS */}
           <button
             onClick={onToggle}
