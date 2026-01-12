@@ -4,6 +4,8 @@ import { getDashboardStats } from '@/app/actions/stats'
 import Layout from '@/components/Layout'
 import DashboardClient from './DashboardClient'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminDashboardPage() {
   const user = await getCurrentUser()
   if (!user) {

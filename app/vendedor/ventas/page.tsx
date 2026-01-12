@@ -4,6 +4,8 @@ import { getVentas } from '@/app/actions/ventas'
 import Layout from '@/components/Layout'
 import VentasClient from './VentasClient'
 
+export const dynamic = 'force-dynamic'
+
 export default async function VendedorVentasPage({
   searchParams,
 }: {

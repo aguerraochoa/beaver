@@ -4,6 +4,8 @@ import { getUsuarios } from '@/app/actions/usuarios'
 import Layout from '@/components/Layout'
 import UsuariosClient from './UsuariosClient'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminUsuariosPage({
   searchParams,
 }: {

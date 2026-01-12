@@ -5,6 +5,8 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { getEmailFromUsernameOrEmail, isUsernameAvailable, createUsuarioAfterSignup } from '@/app/actions/auth'
 
+export const dynamic = 'force-dynamic'
+
 export default function LoginPage() {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
   const [loading, setLoading] = useState(false)

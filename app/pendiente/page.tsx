@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Navbar from '@/components/Navbar'
 
+export const dynamic = 'force-dynamic'
+
 export default function PendientePage() {
   const router = useRouter()
   const supabase = useMemo(() => createClient(), [])

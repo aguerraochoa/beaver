@@ -4,6 +4,8 @@ import { getItems } from '@/app/actions/items'
 import Layout from '@/components/Layout'
 import MisItemsClient from './MisItemsClient'
 
+export const dynamic = 'force-dynamic'
+
 export default async function VendedorMisItemsPage({
   searchParams,
 }: {

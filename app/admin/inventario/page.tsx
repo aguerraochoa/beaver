@@ -5,6 +5,8 @@ import { getUsuarios } from '@/app/actions/usuarios'
 import Layout from '@/components/Layout'
 import InventarioClient from './InventarioClient'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminInventarioPage({
   searchParams,
 }: {

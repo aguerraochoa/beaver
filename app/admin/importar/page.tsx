@@ -6,6 +6,8 @@ import { importCSV } from '@/app/actions/csv'
 import { CSVRow, CSVImportError } from '@/types/database'
 import Layout from '@/components/Layout'
 
+export const dynamic = 'force-dynamic'
+
 export default function AdminImportarPage() {
   const router = useRouter()
   const [file, setFile] = useState<File | null>(null)
