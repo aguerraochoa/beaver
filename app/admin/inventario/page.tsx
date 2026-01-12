@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { getCurrentUser, requireAdmin } from '@/lib/utils/auth'
-import { getItems, assignItems, exportItemsToCSV } from '@/app/actions/items'
+import { getItems, assignItems } from '@/app/actions/items'
 import { getUsuarios } from '@/app/actions/usuarios'
 import Layout from '@/components/Layout'
 import InventarioClient from './InventarioClient'

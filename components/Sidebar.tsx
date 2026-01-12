@@ -16,9 +16,16 @@ function Sidebar({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
+  
+  // Initialize state - must match server render (no sessionStorage access)
   const [usuario, setUsuario] = useState<any>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   useEffect(() => {
     const checkMobile = () => {
@@ -30,49 +37,72 @@ function Sidebar({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }
   }, [])
 
   useEffect(() => {
+    if (!isMounted) return // Wait for client-side mount to avoid hydration issues
+    
     const loadUser = async () => {
-      setIsLoading(true)
-      try {
-        // Try to get from sessionStorage first for instant display
+      // Try to get from sessionStorage first for instant display (client-side only)
+      let hasCachedUser = false
+      if (typeof window !== 'undefined') {
         const cachedUser = sessionStorage.getItem('sidebar_user')
         if (cachedUser) {
           try {
             const parsed = JSON.parse(cachedUser)
             setUsuario(parsed)
+            hasCachedUser = true
+            setIsLoading(false) // Show nav items immediately if we have cache
           } catch (e) {
             // Invalid cache, continue to fetch
           }
         }
+      }
 
+      // If no cached user, show loading
+      if (!hasCachedUser) {
+        setIsLoading(true)
+      }
+
+      try {
         const {
           data: { user: authUser },
         } = await supabase.auth.getUser()
 
         if (authUser) {
-          const { data: usuarioData } = await supabase
+          const { data: usuarioData, error } = await supabase
             .from('usuarios')
             .select('*')
             .eq('id', authUser.id)
             .single()
           
+          if (error) {
+            console.error('Error fetching usuario:', error)
+            setIsLoading(false)
+            return
+          }
+          
           if (usuarioData) {
             setUsuario(usuarioData)
             // Cache user data for instant display on navigation
-            sessionStorage.setItem('sidebar_user', JSON.stringify(usuarioData))
+            if (typeof window !== 'undefined') {
+              sessionStorage.setItem('sidebar_user', JSON.stringify(usuarioData))
+            }
           }
         } else {
           // Clear cache if no auth user
-          sessionStorage.removeItem('sidebar_user')
+          if (typeof window !== 'undefined') {
+            sessionStorage.removeItem('sidebar_user')
+          }
           setUsuario(null)
         }
       } catch (error) {
         console.error('Error loading user:', error)
+        setUsuario(null)
       } finally {
         setIsLoading(false)
       }
     }
+    
     loadUser()
-  }, [supabase])
+  }, [isMounted, supabase])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -101,7 +131,7 @@ function Sidebar({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }
     }
 
     return []
-  }, [usuario?.rol]) // Only recalculate when role changes
+  }, [usuario]) // Recalculate when usuario changes
 
   const getIcon = (iconName: string) => {
     const iconClass = "w-5 h-5 flex-shrink-0"
@@ -215,7 +245,7 @@ function Sidebar({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }
 
         {/* Navigation Items */}
         <nav className="flex-1 overflow-y-auto py-4">
-          {isLoading ? (
+          {isLoading && navItems.length === 0 ? (
             <div className="px-4 py-2 text-sm text-blue-200">Cargando...</div>
           ) : (
             <div className="space-y-1 px-2">

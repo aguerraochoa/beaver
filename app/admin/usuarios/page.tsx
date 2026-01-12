@@ -20,7 +20,7 @@ export default async function AdminUsuariosPage() {
 
   return (
     <Layout>
-      <UsuariosClient usuarios={usuarios} />
+      <UsuariosClient usuarios={usuarios} currentUserId={user.id} />
     </Layout>
   )
 }

@@ -40,11 +40,11 @@ export default function InventarioClient({ items, usuarios, filters }: Inventari
   })
 
   // Get unique values for filters
-  const categorias = useMemo(() => [...new Set(items.map(i => i.categoria).filter(Boolean))], [items])
-  const subcategorias = useMemo(() => [...new Set(items.map(i => i.subcategoria).filter(Boolean))], [items])
-  const racks = useMemo(() => [...new Set(items.map(i => i.rack).filter(Boolean))], [items])
-  const condiciones = useMemo(() => [...new Set(items.map(i => i.condicion).filter(Boolean))], [items])
-  const años = useMemo(() => [...new Set(items.map(i => i.año).filter(Boolean))].sort((a, b) => (b || 0) - (a || 0)), [items])
+  const categorias = useMemo(() => [...new Set(items.map(i => i.categoria).filter((c): c is string => Boolean(c)))], [items])
+  const subcategorias = useMemo(() => [...new Set(items.map(i => i.subcategoria).filter((s): s is string => Boolean(s)))], [items])
+  const racks = useMemo(() => [...new Set(items.map(i => i.rack).filter((r): r is string => Boolean(r)))], [items])
+  const condiciones = useMemo(() => [...new Set(items.map(i => i.condicion).filter((c): c is string => Boolean(c)))], [items])
+  const años = useMemo(() => [...new Set(items.map(i => i.año).filter((a): a is number => a !== null && a !== undefined))].sort((a, b) => b - a), [items])
 
   const handleFilterChange = (key: string, value: string) => {
     const params = new URLSearchParams(window.location.search)

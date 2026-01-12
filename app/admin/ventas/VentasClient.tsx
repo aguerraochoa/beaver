@@ -192,16 +192,22 @@ export default function VentasClient({ ventas, filters }: VentasClientProps) {
                   <button
                     onClick={() => handleApprove(venta.venta_id)}
                     disabled={processing === venta.venta_id}
-                    className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-semibold disabled:opacity-50 transition-colors"
+                    className="flex-1 flex items-center justify-center p-2 bg-green-50 hover:bg-green-100 text-green-700 rounded-lg disabled:opacity-50 transition-colors border border-green-200"
+                    title="Aprobar venta"
                   >
-                    {processing === venta.venta_id ? 'Procesando...' : 'Aprobar'}
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
                   </button>
                   <button
                     onClick={() => handleReject(venta.venta_id)}
                     disabled={processing === venta.venta_id}
-                    className="flex-1 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-semibold disabled:opacity-50 transition-colors"
+                    className="flex-1 flex items-center justify-center p-2 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg disabled:opacity-50 transition-colors border border-red-200"
+                    title="Rechazar venta"
                   >
-                    Rechazar
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                   </button>
                 </div>
               )}
@@ -277,16 +283,22 @@ export default function VentasClient({ ventas, filters }: VentasClientProps) {
                         <button
                           onClick={() => handleApprove(venta.venta_id)}
                           disabled={processing === venta.venta_id}
-                          className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded text-xs font-semibold disabled:opacity-50"
+                          className="p-2 bg-green-50 hover:bg-green-100 text-green-700 rounded-lg transition-colors border border-green-200 disabled:opacity-50"
+                          title="Aprobar venta"
                         >
-                          {processing === venta.venta_id ? 'Procesando...' : 'Aprobar'}
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
                         </button>
                         <button
                           onClick={() => handleReject(venta.venta_id)}
                           disabled={processing === venta.venta_id}
-                          className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-semibold disabled:opacity-50"
+                          className="p-2 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg transition-colors border border-red-200 disabled:opacity-50"
+                          title="Rechazar venta"
                         >
-                          Rechazar
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
                         </button>
                       </div>
                     )}
