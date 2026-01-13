@@ -84,8 +84,8 @@ export default function VendedoresClient({ data }: VendedoresClientProps) {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 lg:p-6">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 lg:p-3 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                            <svg className="w-5 h-5 lg:w-6 lg:h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="p-2 lg:p-3 rounded-lg bg-[#2d5a8a]/10 dark:bg-[#2d5a8a]/20">
+                            <svg className="w-5 h-5 lg:w-6 lg:h-6 text-[#2d5a8a] dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                             </svg>
                         </div>
@@ -100,8 +100,8 @@ export default function VendedoresClient({ data }: VendedoresClientProps) {
 
                 <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 lg:p-6">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 lg:p-3 rounded-lg bg-green-100 dark:bg-green-900/30">
-                            <svg className="w-5 h-5 lg:w-6 lg:h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="p-2 lg:p-3 rounded-lg bg-[#2d5a8a]/10 dark:bg-[#2d5a8a]/20">
+                            <svg className="w-5 h-5 lg:w-6 lg:h-6 text-[#2d5a8a] dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
@@ -116,8 +116,8 @@ export default function VendedoresClient({ data }: VendedoresClientProps) {
 
                 <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 lg:p-6">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 lg:p-3 rounded-lg bg-purple-100 dark:bg-purple-900/30">
-                            <svg className="w-5 h-5 lg:w-6 lg:h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="p-2 lg:p-3 rounded-lg bg-[#2d5a8a]/10 dark:bg-[#2d5a8a]/20">
+                            <svg className="w-5 h-5 lg:w-6 lg:h-6 text-[#2d5a8a] dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                             </svg>
                         </div>
@@ -132,8 +132,8 @@ export default function VendedoresClient({ data }: VendedoresClientProps) {
 
                 <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 lg:p-6">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 lg:p-3 rounded-lg bg-amber-100 dark:bg-amber-900/30">
-                            <svg className="w-5 h-5 lg:w-6 lg:h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="p-2 lg:p-3 rounded-lg bg-[#2d5a8a]/10 dark:bg-[#2d5a8a]/20">
+                            <svg className="w-5 h-5 lg:w-6 lg:h-6 text-[#2d5a8a] dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
@@ -149,42 +149,42 @@ export default function VendedoresClient({ data }: VendedoresClientProps) {
 
             {/* Controls */}
             <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-                <div className="flex flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                    <div className="relative">
+                        <select
+                            value={sortField}
+                            onChange={(e) => {
+                                setSortField(e.target.value as SortField)
+                                setSortOrder('desc')
+                            }}
+                            className="appearance-none pl-3 pr-8 py-2 rounded-lg text-sm font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a] focus:border-transparent cursor-pointer min-w-[140px]"
+                        >
+                            <option value="revenue">Por Ingresos</option>
+                            <option value="sales">Por Ventas</option>
+                            <option value="approval">Por Aprobación</option>
+                            <option value="name">Por Nombre</option>
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
+
                     <button
-                        onClick={() => handleSort('revenue')}
-                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${sortField === 'revenue'
-                            ? 'bg-[#2d5a8a] text-white'
-                            : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
-                            }`}
+                        onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+                        className="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-[#2d5a8a] hover:border-[#2d5a8a] transition-all"
+                        title={sortOrder === 'asc' ? 'Ascendente (Menor a Mayor)' : 'Descendente (Mayor a Menor)'}
                     >
-                        Por Ingresos {sortField === 'revenue' && (sortOrder === 'desc' ? '↓' : '↑')}
-                    </button>
-                    <button
-                        onClick={() => handleSort('sales')}
-                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${sortField === 'sales'
-                            ? 'bg-[#2d5a8a] text-white'
-                            : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
-                            }`}
-                    >
-                        Por Ventas {sortField === 'sales' && (sortOrder === 'desc' ? '↓' : '↑')}
-                    </button>
-                    <button
-                        onClick={() => handleSort('approval')}
-                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${sortField === 'approval'
-                            ? 'bg-[#2d5a8a] text-white'
-                            : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
-                            }`}
-                    >
-                        Por Aprobación {sortField === 'approval' && (sortOrder === 'desc' ? '↓' : '↑')}
-                    </button>
-                    <button
-                        onClick={() => handleSort('name')}
-                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${sortField === 'name'
-                            ? 'bg-[#2d5a8a] text-white'
-                            : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
-                            }`}
-                    >
-                        Por Nombre {sortField === 'name' && (sortOrder === 'desc' ? '↓' : '↑')}
+                        {sortOrder === 'asc' ? (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
+                            </svg>
+                        ) : (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4" />
+                            </svg>
+                        )}
                     </button>
                 </div>
                 <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
@@ -216,11 +216,7 @@ export default function VendedoresClient({ data }: VendedoresClientProps) {
                             <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                                 {/* Rank and Avatar */}
                                 <div className="flex items-center gap-3">
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${index === 0 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300' :
-                                        index === 1 ? 'bg-slate-200 text-slate-600 dark:bg-slate-600 dark:text-slate-300' :
-                                            index === 2 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300' :
-                                                'bg-slate-100 text-slate-500 dark:bg-slate-600 dark:text-slate-400'
-                                        }`}>
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300`}>
                                         {index + 1}
                                     </div>
                                     <div className="w-12 h-12 rounded-full bg-[#2d5a8a] flex items-center justify-center text-white font-bold text-lg">

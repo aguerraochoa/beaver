@@ -39,7 +39,7 @@ export default function LoginPage() {
     const details = urlParams.get('details')
     const verified = urlParams.get('verified')
     const reset = urlParams.get('reset')
-    
+
     if (error === 'auth_failed') {
       setMessageText(
         details
@@ -70,14 +70,14 @@ export default function LoginPage() {
   useEffect(() => {
     const checkUser = async () => {
       await new Promise(resolve => setTimeout(resolve, 100))
-      
+
       const {
         data: { user },
       } = await supabase.auth.getUser()
       if (user) {
         const urlParams = new URLSearchParams(window.location.search)
         const nextUrl = urlParams.get('next') || '/'
-        
+
         if (urlParams.get('verified') === 'true') {
           setTimeout(() => {
             router.push(nextUrl)
@@ -109,7 +109,7 @@ export default function LoginPage() {
     if (pwd.length < 6) {
       return 'La contraseña debe tener al menos 6 caracteres'
     }
-    
+
     return null
   }
 
@@ -288,11 +288,10 @@ export default function LoginPage() {
                 setPassword('')
                 setConfirmPassword('')
               }}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
-                mode === 'signin'
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${mode === 'signin'
                   ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-              }`}
+                }`}
             >
               Iniciar Sesión
             </button>
@@ -307,11 +306,10 @@ export default function LoginPage() {
                 setPassword('')
                 setConfirmPassword('')
               }}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
-                mode === 'signup'
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${mode === 'signup'
                   ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-              }`}
+                }`}
             >
               Registrarse
             </button>
@@ -465,13 +463,12 @@ export default function LoginPage() {
 
           {message && (
             <div
-              className={`p-3 rounded-lg text-sm ${
-                message.type === 'error'
+              className={`p-3 rounded-lg text-sm ${message.type === 'error'
                   ? 'bg-red-50 text-red-800 dark:bg-red-900/20 dark:text-red-400'
                   : message.type === 'info'
-                  ? 'bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
-                  : 'bg-green-50 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-              }`}
+                    ? 'bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
+                    : 'bg-green-50 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                }`}
             >
               {message.text}
             </div>
@@ -496,73 +493,73 @@ export default function LoginPage() {
               aria-describedby="forgot-password-desc"
               tabIndex={-1}
             >
-            <div className="flex items-center justify-between mb-4">
-              <h2
-                id="forgot-password-title"
-                className="text-2xl font-bold text-slate-900 dark:text-slate-100"
-              >
-                Restablecer Contraseña
-              </h2>
-              <button
-                onClick={closeForgotPassword}
-                className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            
-            <p id="forgot-password-desc" className="text-slate-600 dark:text-slate-400 mb-6">
-              Ingresa tu dirección de email y te enviaremos un enlace para restablecer tu contraseña.
-            </p>
-
-            <form onSubmit={handleForgotPassword} className="space-y-4">
-              <div>
-                <label htmlFor="resetEmail" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Email
-                </label>
-                <input
-                  id="resetEmail"
-                  type="email"
-                  value={resetEmail}
-                  onChange={(e) => setResetEmail(e.target.value)}
-                  required
-                  disabled={resetLoading}
-                  autoFocus
-                  className="w-full px-4 py-2 border-2 border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
-                  placeholder="tu@ejemplo.com"
-                />
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  type="submit"
-                  disabled={resetLoading}
-                  className="flex-1 px-4 py-2 bg-[#6b7d5a] hover:bg-[#5a6b4a] text-white rounded-lg font-semibold shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#6b7d5a] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              <div className="flex items-center justify-between mb-4">
+                <h2
+                  id="forgot-password-title"
+                  className="text-2xl font-bold text-slate-900 dark:text-slate-100"
                 >
-                  {resetLoading ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Enviando...
-                    </span>
-                  ) : (
-                    'Enviar Enlace'
-                  )}
-                </button>
+                  Restablecer Contraseña
+                </h2>
                 <button
-                  type="button"
                   onClick={closeForgotPassword}
-                  className="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-semibold hover:bg-slate-300 dark:hover:bg-slate-600 transition-all"
+                  className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
                 >
-                  Cancelar
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
               </div>
-            </form>
-          </div>
+
+              <p id="forgot-password-desc" className="text-slate-600 dark:text-slate-400 mb-6">
+                Ingresa tu dirección de email y te enviaremos un enlace para restablecer tu contraseña.
+              </p>
+
+              <form onSubmit={handleForgotPassword} className="space-y-4">
+                <div>
+                  <label htmlFor="resetEmail" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Email
+                  </label>
+                  <input
+                    id="resetEmail"
+                    type="email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    required
+                    disabled={resetLoading}
+                    autoFocus
+                    className="w-full px-4 py-2 border-2 border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                    placeholder="tu@ejemplo.com"
+                  />
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    type="submit"
+                    disabled={resetLoading}
+                    className="flex-1 px-4 py-2 bg-[#6b7d5a] hover:bg-[#5a6b4a] text-white rounded-lg font-semibold shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#6b7d5a] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  >
+                    {resetLoading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Enviando...
+                      </span>
+                    ) : (
+                      'Enviar Enlace'
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={closeForgotPassword}
+                    className="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-semibold hover:bg-slate-300 dark:hover:bg-slate-600 transition-all"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </>
       )}

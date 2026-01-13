@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/utils/auth'
-import { getItems } from '@/app/actions/items'
+import { getItems, getVendorFilterOptions } from '@/app/actions/items'
 import Layout from '@/components/Layout'
 import MisItemsClient from './MisItemsClient'
 
@@ -23,8 +23,13 @@ export default async function VendedorMisItemsPage({
   const filters = {
     estado: searchParams.estado as string | undefined,
     search: searchParams.search as string | undefined,
+    categoria: searchParams.categoria as string | undefined,
+    subcategoria: searchParams.subcategoria as string | undefined,
+    rack: searchParams.rack as string | undefined,
     asignado_a: user.id, // Only show items assigned to this vendedor
   }
+
+  const filterOptions = await getVendorFilterOptions(user.id)
 
   const pageSize = 25
 
@@ -37,6 +42,7 @@ export default async function VendedorMisItemsPage({
         filters={filters}
         totalCount={count}
         pageSize={pageSize}
+        filterOptions={filterOptions}
       />
     </Layout>
   )

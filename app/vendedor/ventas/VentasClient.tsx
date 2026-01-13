@@ -21,6 +21,19 @@ export default function VentasClient({ ventas: initialVentas, totalCount: initia
   const [ventas, setVentas] = useState(initialVentas)
   const [totalCount, setTotalCount] = useState(initialTotalCount)
   const [loadingMore, setLoadingMore] = useState(false)
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
+
+  const toggleExpanded = (ventaId: string) => {
+    setExpandedItems(prev => {
+      const next = new Set(prev)
+      if (next.has(ventaId)) {
+        next.delete(ventaId)
+      } else {
+        next.add(ventaId)
+      }
+      return next
+    })
+  }
 
   useEffect(() => {
     setVentas(initialVentas)
@@ -83,45 +96,69 @@ export default function VentasClient({ ventas: initialVentas, totalCount: initia
           return (
             <div
               key={venta.venta_id}
-              className="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-gray-200 dark:border-slate-700 p-4 space-y-3"
+              className="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-gray-200 dark:border-slate-700 overflow-hidden"
             >
-              {/* Header */}
-              <div className="flex items-start justify-between">
-                <div className="flex-1 min-w-0">
-                  <p className="text-base font-semibold text-slate-900 dark:text-slate-100 truncate">
-                    {venta.item?.objeto || venta.item?.identificador || venta.item_id.substring(0, 8)}
-                  </p>
+              {/* Header with Name, Price, Status, Toggle */}
+              <div
+                className="p-4 flex items-start justify-between cursor-pointer"
+                onClick={() => toggleExpanded(venta.venta_id)}
+              >
+                <div className="flex-1 min-w-0 pr-3">
+                  <div className="flex justify-between items-start">
+                    <div className="min-w-0">
+                      <p className="text-base font-semibold text-slate-900 dark:text-slate-100 truncate">
+                        {venta.item?.objeto || venta.item?.identificador || venta.item_id.substring(0, 8)}
+                      </p>
+                      <p className="text-xs font-bold text-[#1e3a5f] dark:text-[#6ba3d3] mt-0.5">
+                        {formatCurrency(venta.precio, venta.moneda)}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <span className={`px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2 whitespace-nowrap ${getStatusColor(venta.estado)}`}>
-                  {venta.estado}
-                </span>
+
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <span className={`px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getStatusColor(venta.estado)}`}>
+                    {venta.estado}
+                  </span>
+                  <svg
+                    className={`w-5 h-5 text-slate-400 transition-transform ${expandedItems.has(venta.venta_id) ? 'rotate-180' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
               </div>
 
-              {/* Details */}
-              <div className="grid grid-cols-2 gap-3 pt-2 border-t border-gray-200 dark:border-slate-700">
-                <div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Precio</p>
-                  <p className="text-sm font-bold text-[#1e3a5f] dark:text-[#6ba3d3]">
-                    {formatCurrency(venta.precio, venta.moneda)}
-                  </p>
+              {/* Collapsible Content */}
+              {expandedItems.has(venta.venta_id) && (
+                <div className="px-4 pb-4 border-t border-gray-100 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-800/50">
+                  <div className="grid grid-cols-2 gap-3 pt-3">
+                    <div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Fecha</p>
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                        {formatDate(venta.fecha_venta)}
+                      </p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Evidencia</p>
+                      <a
+                        href={venta.evidencia_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-[#2d5a8a] dark:text-[#6ba3d3] hover:text-[#1e3a5f] dark:hover:text-[#4a7bc8] underline font-medium flex items-center gap-1"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Ver archivo de evidencia
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      </a>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Fecha</p>
-                  <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                    {formatDate(venta.fecha_venta)}
-                  </p>
-                </div>
-                <div className="col-span-2">
-                  <a
-                    href={venta.evidencia_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-[#2d5a8a] dark:text-[#6ba3d3] hover:text-[#1e3a5f] dark:hover:text-[#4a7bc8] underline font-medium"
-                  >
-                    Ver evidencia →
-                  </a>
-                </div>
-              </div>
+              )}
             </div>
           )
         })}

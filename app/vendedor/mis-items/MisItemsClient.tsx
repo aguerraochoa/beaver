@@ -10,9 +10,14 @@ interface MisItemsClientProps {
   filters: any
   totalCount: number
   pageSize: number
+  filterOptions: {
+    categorias: string[]
+    subcategorias: string[]
+    racks: string[]
+  }
 }
 
-export default function MisItemsClient({ items: initialItems, filters: initialFilters, totalCount: initialTotalCount, pageSize }: MisItemsClientProps) {
+export default function MisItemsClient({ items: initialItems, filters: initialFilters, totalCount: initialTotalCount, pageSize, filterOptions }: MisItemsClientProps) {
   const router = useRouter()
   const [items, setItems] = useState(initialItems)
   const [totalCount, setTotalCount] = useState(initialTotalCount)
@@ -53,6 +58,20 @@ export default function MisItemsClient({ items: initialItems, filters: initialFi
   const hasActiveFilters = Object.values(filters).some(Boolean)
   const hasPendingValues = Object.values(pendingFilters).some(Boolean)
   const hasPendingChanges = JSON.stringify(pendingFilters) !== JSON.stringify(filters)
+
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
+
+  const toggleExpanded = (itemId: string) => {
+    setExpandedItems(prev => {
+      const next = new Set(prev)
+      if (next.has(itemId)) {
+        next.delete(itemId)
+      } else {
+        next.add(itemId)
+      }
+      return next
+    })
+  }
 
   const handleLoadMore = async () => {
     if (loadingMore || items.length >= totalCount) return
@@ -151,7 +170,43 @@ export default function MisItemsClient({ items: initialItems, filters: initialFi
             </div>
 
             {/* Bottom Row: Dropdowns */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4">
+              <select
+                value={pendingFilters.categoria || ''}
+                onChange={(e) => handlePendingFilterChange('categoria', e.target.value)}
+                aria-label="Filtrar por categoría"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm lg:text-base bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
+              >
+                <option value="">Todas las categorías</option>
+                {filterOptions?.categorias.map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+
+              <select
+                value={pendingFilters.subcategoria || ''}
+                onChange={(e) => handlePendingFilterChange('subcategoria', e.target.value)}
+                aria-label="Filtrar por subcategoría"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm lg:text-base bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
+              >
+                <option value="">Todas las subcategorías</option>
+                {filterOptions?.subcategorias.map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+
+              <select
+                value={pendingFilters.rack || ''}
+                onChange={(e) => handlePendingFilterChange('rack', e.target.value)}
+                aria-label="Filtrar por rack"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm lg:text-base bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
+              >
+                <option value="">Todos los racks</option>
+                {filterOptions?.racks.map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+
               <select
                 value={pendingFilters.estado || ''}
                 onChange={(e) => handlePendingFilterChange('estado', e.target.value)}
@@ -185,55 +240,77 @@ export default function MisItemsClient({ items: initialItems, filters: initialFi
           return (
             <div
               key={item.item_id}
-              className="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-gray-200 dark:border-slate-700 p-4 space-y-3"
+              className="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-gray-200 dark:border-slate-700 overflow-hidden"
             >
-              {/* Header */}
-              <div className="flex items-start justify-between">
-                <div className="flex-1 min-w-0">
-                  <p className="text-base font-semibold text-slate-900 dark:text-slate-100 truncate">
-                    {item.objeto || '-'}
-                  </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                    ID: {item.identificador || item.item_id.substring(0, 8)}
-                  </p>
+              {/* Header with Name, Category, Status, Toggle */}
+              <div
+                className="p-4 flex items-start justify-between cursor-pointer"
+                onClick={() => toggleExpanded(item.item_id)}
+              >
+                <div className="flex-1 min-w-0 pr-3">
+                  <div className="flex justify-between items-start">
+                    <div className="min-w-0">
+                      <p className="text-base font-semibold text-slate-900 dark:text-slate-100 truncate">
+                        {item.objeto || '-'}
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                        {item.categoria || '-'}{item.subcategoria ? ` / ${item.subcategoria}` : ''}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <span className={`px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2 whitespace-nowrap ${getStatusColor(item.estado)}`}>
-                  {item.estado.replace('_', ' ')}
-                </span>
-              </div>
 
-              {/* Details */}
-              <div className="grid grid-cols-2 gap-3 pt-2 border-t border-gray-200 dark:border-slate-700">
-                <div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Categoría</p>
-                  <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                    {item.categoria || '-'}
-                    {item.subcategoria && (
-                      <span className="text-slate-500 dark:text-slate-400"> / {item.subcategoria}</span>
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Rack/Nivel</p>
-                  <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                    {item.rack || '-'} {item.nivel && `/ ${item.nivel}`}
-                  </p>
-                </div>
-              </div>
-
-              {/* Actions */}
-              {item.estado === 'asignado' && (
-                <div className="pt-2 border-t border-gray-200 dark:border-slate-700">
-                  <a
-                    href={`/vendedor/registrar-venta/${item.item_id}`}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#2d5a8a] hover:bg-[#1e3a5f] text-white rounded-lg text-sm font-semibold transition-colors"
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <span className={`px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getStatusColor(item.estado)}`}>
+                    {item.estado.replace('_', ' ')}
+                  </span>
+                  <svg
+                    className={`w-5 h-5 text-slate-400 transition-transform ${expandedItems.has(item.item_id) ? 'rotate-180' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    Registrar Venta
-                  </a>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Collapsible Content */}
+              {expandedItems.has(item.item_id) && (
+                <div className="px-4 pb-4 border-t border-gray-100 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-800/50">
+                  {/* Details Grid */}
+                  <div className="grid grid-cols-2 gap-3 pt-3">
+                    <div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">ID</p>
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100 font-mono">
+                        {item.identificador || item.item_id.substring(0, 8)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Rack/Nivel</p>
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                        {item.rack || '-'} {item.nivel && `/ ${item.nivel}`}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  {item.estado === 'asignado' && (
+                    <div className="pt-4 mt-2 border-t border-gray-200 dark:border-slate-700">
+                      <a
+                        href={`/vendedor/registrar-venta/${item.item_id}`}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#2d5a8a] hover:bg-[#1e3a5f] text-white rounded-lg text-sm font-semibold transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Registrar Venta
+                      </a>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
           )
+
         })}
       </div>
 

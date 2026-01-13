@@ -127,6 +127,43 @@ export async function getItemFilterOptions() {
   }
 }
 
+export async function getVendorFilterOptions(vendedorId: string) {
+  await requireAuth()
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('items')
+    .select('categoria, subcategoria, rack')
+    .eq('asignado_a', vendedorId)
+
+  if (error) {
+    throw new Error(`Error fetching vendor filters: ${error.message}`)
+  }
+
+  const categorias = new Set<string>()
+  const subcategorias = new Set<string>()
+  const racks = new Set<string>()
+
+  type FilterRow = {
+    categoria: string | null
+    subcategoria: string | null
+    rack: string | null
+  }
+
+  const rows = (data as unknown) as FilterRow[] | null
+  for (const row of rows ?? []) {
+    if (row.categoria) categorias.add(row.categoria)
+    if (row.subcategoria) subcategorias.add(row.subcategoria)
+    if (row.rack) racks.add(row.rack)
+  }
+
+  return {
+    categorias: Array.from(categorias).sort((a, b) => a.localeCompare(b)),
+    subcategorias: Array.from(subcategorias).sort((a, b) => a.localeCompare(b)),
+    racks: Array.from(racks).sort((a, b) => a.localeCompare(b)),
+  }
+}
+
 export async function getItemById(itemId: string) {
   await requireAuth()
   const supabase = await createClient()
