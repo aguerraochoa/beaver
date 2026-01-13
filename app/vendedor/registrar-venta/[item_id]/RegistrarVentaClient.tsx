@@ -147,7 +147,8 @@ export default function RegistrarVentaClient({ item }: RegistrarVentaClientProps
                 value={formData.fecha_venta}
                 onChange={(e) => setFormData({ ...formData, fecha_venta: e.target.value })}
                 required
-                className="w-full px-3 py-2 lg:px-4 lg:py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a] text-sm lg:text-base"
+                className="w-full px-3 py-2 lg:px-4 lg:py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a] text-sm lg:text-base h-[42px] lg:h-auto"
+                style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
               />
             </div>
 
