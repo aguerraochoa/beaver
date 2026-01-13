@@ -17,6 +17,7 @@ export default function MisItemsClient({ items: initialItems, filters: initialFi
   const [items, setItems] = useState(initialItems)
   const [totalCount, setTotalCount] = useState(initialTotalCount)
   const [filters, setFilters] = useState(initialFilters)
+  const [pendingFilters, setPendingFilters] = useState(initialFilters)
   const [loadingMore, setLoadingMore] = useState(false)
   const [filtersOpen, setFiltersOpen] = useState(false) // Mobile filters toggle
 
@@ -24,26 +25,34 @@ export default function MisItemsClient({ items: initialItems, filters: initialFi
     setItems(initialItems)
     setTotalCount(initialTotalCount)
     setFilters(initialFilters)
+    setPendingFilters(initialFilters)
   }, [initialItems, initialTotalCount, initialFilters])
 
   const basePath = '/vendedor/mis-items'
 
-  const updateSearchParams = (mutate: (params: URLSearchParams) => void) => {
-    const params = new URLSearchParams(window.location.search)
-    mutate(params)
+  const handlePendingFilterChange = (key: string, value: string) => {
+    setPendingFilters((prev: Record<string, string | undefined>) => ({ ...prev, [key]: value || undefined }))
+  }
+
+  const handleApplyFilters = () => {
+    const params = new URLSearchParams()
+    Object.entries(pendingFilters).forEach(([key, value]) => {
+      if (value) params.set(key, value as string)
+    })
     const query = params.toString()
     router.push(query ? `${basePath}?${query}` : basePath)
   }
 
-  const handleFilterChange = (key: string, value: string) => {
-    updateSearchParams((params) => {
-      if (value) {
-        params.set(key, value)
-      } else {
-        params.delete(key)
-      }
-    })
+  const handleClearFilters = () => {
+    setPendingFilters(initialFilters)
+    if (Object.values(filters).some(Boolean)) {
+      router.push(basePath)
+    }
   }
+
+  const hasActiveFilters = Object.values(filters).some(Boolean)
+  const hasPendingValues = Object.values(pendingFilters).some(Boolean)
+  const hasPendingChanges = JSON.stringify(pendingFilters) !== JSON.stringify(filters)
 
   const handleLoadMore = async () => {
     if (loadingMore || items.length >= totalCount) return
@@ -97,28 +106,65 @@ export default function MisItemsClient({ items: initialItems, filters: initialFi
         </button>
 
         {/* Filter Content */}
+        {/* Filter Content */}
+        {/* Filter Content */}
+        {/* Filter Content */}
         <div id="mis-items-filters" className={`${filtersOpen ? 'block' : 'hidden'} lg:block p-3 lg:p-4`}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
-            <input
-              type="text"
-              placeholder="Buscar..."
-              value={filters.search || ''}
-              onChange={(e) => handleFilterChange('search', e.target.value)}
-              aria-label="Buscar items asignados"
-              className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm lg:text-base bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
-            />
-            <select
-              value={filters.estado || ''}
-              onChange={(e) => handleFilterChange('estado', e.target.value)}
-              aria-label="Filtrar por estado"
-              className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm lg:text-base bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
-            >
-              <option value="">Todos los estados</option>
-              <option value="disponible">Disponible</option>
-              <option value="asignado">Asignado</option>
-              <option value="vendido_pendiente">Vendido Pendiente</option>
-              <option value="vendido_aprobado">Vendido Aprobado</option>
-            </select>
+          <div className="flex flex-col gap-4">
+            {/* Top Row: Search + Actions */}
+            <div className="flex items-center gap-3">
+              <div className="flex-grow">
+                <input
+                  type="text"
+                  placeholder="Buscar..."
+                  value={pendingFilters.search || ''}
+                  onChange={(e) => handlePendingFilterChange('search', e.target.value)}
+                  aria-label="Buscar items asignados"
+                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm lg:text-base bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
+                />
+              </div>
+
+              {/* Filter Actions */}
+              <div className="flex items-center gap-2 flex-none">
+                {(hasActiveFilters || hasPendingValues) && (
+                  <button
+                    onClick={handleClearFilters}
+                    className="p-2 text-slate-500 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                    title="Limpiar filtros"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                )}
+                <button
+                  onClick={handleApplyFilters}
+                  disabled={!hasPendingChanges}
+                  className="flex items-center gap-2 px-4 py-2 text-sm bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-white rounded-lg transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none font-medium whitespace-nowrap"
+                >
+                  <span>Aplicar</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Bottom Row: Dropdowns */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
+              <select
+                value={pendingFilters.estado || ''}
+                onChange={(e) => handlePendingFilterChange('estado', e.target.value)}
+                aria-label="Filtrar por estado"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm lg:text-base bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
+              >
+                <option value="">Todos los estados</option>
+                <option value="disponible">Disponible</option>
+                <option value="asignado">Asignado</option>
+                <option value="vendido_pendiente">Vendido Pendiente</option>
+                <option value="vendido_aprobado">Vendido Aprobado</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
