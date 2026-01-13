@@ -326,21 +326,32 @@ function Sidebar({ isOpen, onToggle, isMounted }: SidebarProps) {
         {/* User Info and Logout */}
         {usuario && (
           <div className="border-t border-[#2d5a8a] p-4 flex-shrink-0">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-[#2d5a8a] flex items-center justify-center flex-shrink-0">
+            <Link
+              href="/profile"
+              className="flex items-center gap-3 mb-4 p-2 -m-2 rounded-lg hover:bg-[#2d5a8a]/50 transition-colors group"
+            >
+              <div className="w-10 h-10 rounded-full bg-[#2d5a8a] flex items-center justify-center flex-shrink-0 group-hover:bg-[#3d6a9a] transition-colors">
                 <span className="text-white font-semibold text-sm">
                   {usuario.nombre?.charAt(0).toUpperCase() || 'U'}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-white truncate text-sm">
+                <p className="font-medium text-white truncate text-sm group-hover:text-blue-100 transition-colors">
                   {usuario.nombre}
                 </p>
                 <p className="text-xs text-blue-200 truncate">
                   {usuario.rol}
                 </p>
               </div>
-            </div>
+              <svg
+                className="w-4 h-4 text-blue-300 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
             <button
               onClick={handleLogout}
               className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#2d5a8a] hover:bg-[#1e3a5f] text-white font-semibold text-sm transition-colors min-h-[44px]"
