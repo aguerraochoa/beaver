@@ -105,13 +105,13 @@ export default function MisItemsClient({ items: initialItems, filters: initialFi
               value={filters.search || ''}
               onChange={(e) => handleFilterChange('search', e.target.value)}
               aria-label="Buscar items asignados"
-              className="px-3 py-2 border rounded-lg text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
+              className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm lg:text-base bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
             />
             <select
               value={filters.estado || ''}
               onChange={(e) => handleFilterChange('estado', e.target.value)}
               aria-label="Filtrar por estado"
-              className="px-3 py-2 border rounded-lg text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
+              className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm lg:text-base bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
             >
               <option value="">Todos los estados</option>
               <option value="disponible">Disponible</option>
@@ -128,11 +128,11 @@ export default function MisItemsClient({ items: initialItems, filters: initialFi
         {items.map((item) => {
           const getStatusColor = (estado: string) => {
             switch (estado) {
-              case 'disponible': return 'bg-green-100 text-green-800'
-              case 'asignado': return 'bg-blue-100 text-blue-800'
-              case 'vendido_pendiente': return 'bg-yellow-100 text-yellow-800'
-              case 'vendido_aprobado': return 'bg-purple-100 text-purple-800'
-              default: return 'bg-gray-100 text-gray-800'
+              case 'disponible': return 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
+              case 'asignado': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300'
+              case 'vendido_pendiente': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'
+              case 'vendido_aprobado': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300'
+              default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
             }
           }
 
@@ -163,7 +163,7 @@ export default function MisItemsClient({ items: initialItems, filters: initialFi
                   <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
                     {item.categoria || '-'}
                     {item.subcategoria && (
-                      <span className="text-slate-500"> / {item.subcategoria}</span>
+                      <span className="text-slate-500 dark:text-slate-400"> / {item.subcategoria}</span>
                     )}
                   </p>
                 </div>
@@ -208,11 +208,11 @@ export default function MisItemsClient({ items: initialItems, filters: initialFi
             {items.map((item) => {
               const getStatusColor = (estado: string) => {
                 switch (estado) {
-                  case 'disponible': return 'bg-green-100 text-green-800'
-                  case 'asignado': return 'bg-blue-100 text-blue-800'
-                  case 'vendido_pendiente': return 'bg-yellow-100 text-yellow-800'
-                  case 'vendido_aprobado': return 'bg-purple-100 text-purple-800'
-                  default: return 'bg-gray-100 text-gray-800'
+                  case 'disponible': return 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
+                  case 'asignado': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300'
+                  case 'vendido_pendiente': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'
+                  case 'vendido_aprobado': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300'
+                  default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                 }
               }
 

@@ -395,23 +395,9 @@ export default function LoginPage() {
             )}
 
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  Contraseña
-                </label>
-                {mode === 'signin' && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowForgotPassword(true)
-                      setResetEmail(email)
-                    }}
-                    className="text-xs text-[#2d5a8a] hover:text-[#1e3a5f] dark:text-[#6ba3d3] dark:hover:text-[#4a7bc8] font-medium"
-                  >
-                    ¿Olvidaste tu contraseña?
-                  </button>
-                )}
-              </div>
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                Contraseña
+              </label>
               <input
                 id="password"
                 type="password"
@@ -423,6 +409,20 @@ export default function LoginPage() {
                 className="w-full px-4 py-2 border-2 border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#6b7d5a] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder={mode === 'signup' ? 'Mínimo 6 caracteres' : 'Ingresa tu contraseña'}
               />
+              {mode === 'signin' && (
+                <div className="mt-2 text-right">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowForgotPassword(true)
+                      setResetEmail(email)
+                    }}
+                    className="text-xs text-[#2d5a8a] hover:text-[#1e3a5f] dark:text-[#6ba3d3] dark:hover:text-[#4a7bc8] font-medium"
+                  >
+                    ¿Olvidaste tu contraseña?
+                  </button>
+                </div>
+              )}
             </div>
 
             {mode === 'signup' && (

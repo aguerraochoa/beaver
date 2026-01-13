@@ -73,10 +73,10 @@ export default function VentasClient({ ventas: initialVentas, totalCount: initia
         {ventas.map((venta) => {
           const getStatusColor = (estado: string) => {
             switch (estado) {
-              case 'pendiente': return 'bg-yellow-100 text-yellow-800'
-              case 'aprobada': return 'bg-green-100 text-green-800'
-              case 'rechazada': return 'bg-red-100 text-red-800'
-              default: return 'bg-gray-100 text-gray-800'
+              case 'pendiente': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'
+              case 'aprobada': return 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
+              case 'rechazada': return 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
+              default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
             }
           }
 
@@ -101,7 +101,7 @@ export default function VentasClient({ ventas: initialVentas, totalCount: initia
               <div className="grid grid-cols-2 gap-3 pt-2 border-t border-gray-200 dark:border-slate-700">
                 <div>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Precio</p>
-                  <p className="text-sm font-bold text-[#1e3a5f]">
+                  <p className="text-sm font-bold text-[#1e3a5f] dark:text-[#6ba3d3]">
                     {formatCurrency(venta.precio, venta.moneda)}
                   </p>
                 </div>
@@ -116,7 +116,7 @@ export default function VentasClient({ ventas: initialVentas, totalCount: initia
                     href={venta.evidencia_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-[#2d5a8a] hover:text-[#1e3a5f] underline font-medium"
+                    className="text-sm text-[#2d5a8a] dark:text-[#6ba3d3] hover:text-[#1e3a5f] dark:hover:text-[#4a7bc8] underline font-medium"
                   >
                     Ver evidencia →
                   </a>
@@ -143,10 +143,10 @@ export default function VentasClient({ ventas: initialVentas, totalCount: initia
             {ventas.map((venta) => {
               const getStatusColor = (estado: string) => {
                 switch (estado) {
-                  case 'pendiente': return 'bg-yellow-100 text-yellow-800'
-                  case 'aprobada': return 'bg-green-100 text-green-800'
-                  case 'rechazada': return 'bg-red-100 text-red-800'
-                  default: return 'bg-gray-100 text-gray-800'
+                  case 'pendiente': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'
+                  case 'aprobada': return 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
+                  case 'rechazada': return 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
+                  default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                 }
               }
 
@@ -155,7 +155,7 @@ export default function VentasClient({ ventas: initialVentas, totalCount: initia
                   <td className="px-6 py-4 text-sm text-slate-900 dark:text-slate-100">
                     {venta.item?.objeto || venta.item?.identificador || venta.item_id.substring(0, 8)}
                   </td>
-                  <td className="px-6 py-4 text-sm font-semibold text-[#1e3a5f]">
+                  <td className="px-6 py-4 text-sm font-semibold text-[#1e3a5f] dark:text-[#6ba3d3]">
                     {formatCurrency(venta.precio, venta.moneda)}
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-900 dark:text-slate-100">
@@ -171,7 +171,7 @@ export default function VentasClient({ ventas: initialVentas, totalCount: initia
                       href={venta.evidencia_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#2d5a8a] hover:text-[#1e3a5f] underline"
+                      className="text-[#2d5a8a] dark:text-[#6ba3d3] hover:text-[#1e3a5f] dark:hover:text-[#4a7bc8] underline"
                     >
                       Ver evidencia
                     </a>

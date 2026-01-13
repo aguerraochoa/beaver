@@ -24,7 +24,7 @@ function Sidebar({ isOpen, onToggle, isMounted }: SidebarProps) {
   const router = useRouter()
   const supabase = useMemo(() => createClient(), [])
   const sidebarRef = useRef<HTMLElement>(null)
-  
+
   // Initialize state - must match server render (no localStorage access)
   const [usuario, setUsuario] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -50,7 +50,7 @@ function Sidebar({ isOpen, onToggle, isMounted }: SidebarProps) {
   useEffect(() => {
     const updateInert = () => {
       if (!sidebarRef.current) return
-      
+
       // Only apply inert on mobile when closed
       const isMobileView = window.innerWidth < 1024
       if (isMobileView && !isOpen) {
@@ -82,9 +82,9 @@ function Sidebar({ isOpen, onToggle, isMounted }: SidebarProps) {
 
   useEffect(() => {
     if (!isMounted) return
-    
+
     let isCancelled = false
-    
+
     const loadUser = async () => {
       try {
         const {
@@ -99,7 +99,7 @@ function Sidebar({ isOpen, onToggle, isMounted }: SidebarProps) {
             .select('*')
             .eq('id', authUser.id)
             .single()
-          
+
           if (error) {
             console.error('Error fetching usuario:', error)
             if (!isCancelled) {
@@ -107,7 +107,7 @@ function Sidebar({ isOpen, onToggle, isMounted }: SidebarProps) {
             }
             return
           }
-          
+
           if (usuarioData && !isCancelled) {
             setUsuario(usuarioData)
             if (typeof window !== 'undefined') {
@@ -133,9 +133,9 @@ function Sidebar({ isOpen, onToggle, isMounted }: SidebarProps) {
         }
       }
     }
-    
+
     loadUser()
-    
+
     return () => {
       isCancelled = true
     }
@@ -157,6 +157,7 @@ function Sidebar({ isOpen, onToggle, isMounted }: SidebarProps) {
         { href: '/admin/inventario', label: 'Inventario', icon: 'inventory', group: 'main' },
         { href: '/admin/importar', label: 'Importar', icon: 'import', group: 'main' },
         { href: '/admin/usuarios', label: 'Usuarios', icon: 'users', group: 'main' },
+        { href: '/admin/vendedores', label: 'Vendedores', icon: 'sellers', group: 'main' },
         { href: '/admin/ventas', label: 'Ventas', icon: 'sales', group: 'main' },
       ]
     } else if (usuario.rol === 'vendedor') {
@@ -208,6 +209,12 @@ function Sidebar({ isOpen, onToggle, isMounted }: SidebarProps) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
         )
+      case 'sellers':
+        return (
+          <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+        )
       default:
         return null
     }
@@ -224,7 +231,7 @@ function Sidebar({ isOpen, onToggle, isMounted }: SidebarProps) {
   // Use CSS to handle mobile/desktop visibility
   // Mobile: hidden by default, slides in when isOpen is true
   // Desktop: always visible (lg:translate-x-0)
-  
+
   return (
     <>
       {/* Mobile Overlay - Only visible when sidebar is open */}
@@ -298,8 +305,8 @@ function Sidebar({ isOpen, onToggle, isMounted }: SidebarProps) {
                     className={`
                       flex items-center gap-3 px-3 py-2.5 rounded-lg
                       transition-colors min-h-[44px]
-                      ${active 
-                        ? 'bg-[#2d5a8a] text-white' 
+                      ${active
+                        ? 'bg-[#2d5a8a] text-white'
                         : 'text-blue-200 hover:bg-[#2d5a8a]/50 hover:text-white'
                       }
                     `}

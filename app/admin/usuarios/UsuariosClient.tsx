@@ -62,7 +62,7 @@ export default function UsuariosClient({ usuarios: initialUsuarios, currentUserI
         <>
           <button
             onClick={() => handleApprove(usuario.id, 'vendedor')}
-            className="p-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg transition-colors border border-blue-200"
+            className="p-2 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-400 rounded-lg transition-colors border border-blue-200 dark:border-blue-700"
             title="Aprobar como Vendedor"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,7 +71,7 @@ export default function UsuariosClient({ usuarios: initialUsuarios, currentUserI
           </button>
           <button
             onClick={() => handleApprove(usuario.id, 'admin')}
-            className="p-2 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg transition-colors border border-purple-200"
+            className="p-2 bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-400 rounded-lg transition-colors border border-purple-200 dark:border-purple-700"
             title="Aprobar como Admin"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,7 +83,7 @@ export default function UsuariosClient({ usuarios: initialUsuarios, currentUserI
       {usuario.rol === 'vendedor' && (
         <button
           onClick={() => handleChangeRole(usuario.id, 'admin')}
-          className="p-2 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg transition-colors border border-purple-200"
+          className="p-2 bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-400 rounded-lg transition-colors border border-purple-200 dark:border-purple-700"
           title="Promover a Admin"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,7 +94,7 @@ export default function UsuariosClient({ usuarios: initialUsuarios, currentUserI
       {usuario.rol === 'admin' && usuario.id !== currentUserId && (
         <button
           onClick={() => handleChangeRole(usuario.id, 'vendedor')}
-          className="p-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg transition-colors border border-blue-200"
+          className="p-2 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-400 rounded-lg transition-colors border border-blue-200 dark:border-blue-700"
           title="Cambiar a Vendedor"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,11 +105,10 @@ export default function UsuariosClient({ usuarios: initialUsuarios, currentUserI
       {usuario.id !== currentUserId && (
         <button
           onClick={() => handleToggleActivo(usuario.id)}
-          className={`p-2 rounded-lg transition-colors border ${
-            usuario.activo
-              ? 'bg-red-50 hover:bg-red-100 text-red-700 border-red-200'
-              : 'bg-green-50 hover:bg-green-100 text-green-700 border-green-200'
-          }`}
+          className={`p-2 rounded-lg transition-colors border ${usuario.activo
+              ? 'bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-700 dark:text-red-400 border-red-200 dark:border-red-700'
+              : 'bg-green-50 dark:bg-green-900/30 hover:bg-green-100 dark:hover:bg-green-900/50 text-green-700 dark:text-green-400 border-green-200 dark:border-green-700'
+            }`}
           title={usuario.activo ? 'Desactivar usuario' : 'Activar usuario'}
         >
           {usuario.activo ? (
@@ -128,7 +127,7 @@ export default function UsuariosClient({ usuarios: initialUsuarios, currentUserI
 
   const handleLoadMore = async () => {
     if (loadingMore || usuarios.length >= totalCount) return
-    
+
     setLoadingMore(true)
     try {
       const { usuarios: newUsuarios, count } = await getUsuarios({
@@ -167,20 +166,18 @@ export default function UsuariosClient({ usuarios: initialUsuarios, currentUserI
                   {usuario.nombre}
                 </p>
                 {usuario.username && (
-                  <p className="text-xs text-slate-500">@{usuario.username}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">@{usuario.username}</p>
                 )}
               </div>
               <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                <span className={`px-2 py-1 rounded text-xs ${
-                  usuario.rol === 'admin' ? 'bg-purple-100 text-purple-800' :
-                  usuario.rol === 'vendedor' ? 'bg-blue-100 text-blue-800' :
-                  'bg-yellow-100 text-yellow-800'
-                }`}>
+                <span className={`px-2 py-1 rounded text-xs ${usuario.rol === 'admin' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300' :
+                    usuario.rol === 'vendedor' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300' :
+                      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'
+                  }`}>
                   {usuario.rol}
                 </span>
-                <span className={`px-2 py-1 rounded text-xs ${
-                  usuario.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}>
+                <span className={`px-2 py-1 rounded text-xs ${usuario.activo ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
+                  }`}>
                   {usuario.activo ? 'Activo' : 'Inactivo'}
                 </span>
               </div>
@@ -213,22 +210,20 @@ export default function UsuariosClient({ usuarios: initialUsuarios, currentUserI
                 <td className="px-6 py-4 text-sm text-slate-900 dark:text-slate-100">
                   <div>{usuario.nombre}</div>
                   {usuario.username && (
-                    <div className="text-xs text-slate-500">@{usuario.username}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">@{usuario.username}</div>
                   )}
                 </td>
                 <td className="px-6 py-4 text-sm">
-                  <span className={`px-2 py-1 rounded text-xs ${
-                    usuario.rol === 'admin' ? 'bg-purple-100 text-purple-800' :
-                    usuario.rol === 'vendedor' ? 'bg-blue-100 text-blue-800' :
-                    'bg-yellow-100 text-yellow-800'
-                  }`}>
+                  <span className={`px-2 py-1 rounded text-xs ${usuario.rol === 'admin' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300' :
+                      usuario.rol === 'vendedor' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300' :
+                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'
+                    }`}>
                     {usuario.rol}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm">
-                  <span className={`px-2 py-1 rounded text-xs ${
-                    usuario.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
+                  <span className={`px-2 py-1 rounded text-xs ${usuario.activo ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
+                    }`}>
                     {usuario.activo ? 'Activo' : 'Inactivo'}
                   </span>
                 </td>

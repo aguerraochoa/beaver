@@ -89,7 +89,7 @@ export default function InventarioClient({
 
   const handleLoadMore = async () => {
     if (loadingMore || items.length >= totalCount) return
-    
+
     setLoadingMore(true)
     try {
       const newFilters = { ...filters }
@@ -219,7 +219,7 @@ export default function InventarioClient({
 
   const handleDelete = async (itemId: string) => {
     if (!confirm('¿Estás seguro de eliminar este item?')) return
-    
+
     try {
       await deleteItem(itemId)
       router.refresh()
@@ -236,7 +236,7 @@ export default function InventarioClient({
 
   const handleSplitSubmit = async () => {
     if (!splittingItem) return
-    
+
     const validObjetos = splitObjetos.filter(o => o.trim().length > 0)
     if (validObjetos.length < 2) {
       alert('Debes ingresar al menos 2 objetos')
@@ -334,7 +334,7 @@ export default function InventarioClient({
               <select
                 value={selectedVendedor}
                 onChange={(e) => setSelectedVendedor(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg mb-4"
+                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg mb-4 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
                 autoFocus
               >
                 <option value="">Seleccionar vendedor</option>
@@ -391,7 +391,7 @@ export default function InventarioClient({
                       type="text"
                       value={formData.identificador || ''}
                       onChange={(e) => setFormData({ ...formData, identificador: e.target.value || null })}
-                      className="w-full px-4 py-2 border rounded-lg"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
                       placeholder="ABC-001"
                       autoFocus
                     />
@@ -403,7 +403,7 @@ export default function InventarioClient({
                     <select
                       value={formData.estado}
                       onChange={(e) => setFormData({ ...formData, estado: e.target.value as any })}
-                      className="w-full px-4 py-2 border rounded-lg"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
                     >
                       <option value="disponible">Disponible</option>
                       <option value="asignado">Asignado</option>
@@ -419,7 +419,7 @@ export default function InventarioClient({
                       type="text"
                       value={formData.categoria || ''}
                       onChange={(e) => setFormData({ ...formData, categoria: e.target.value || null })}
-                      className="w-full px-4 py-2 border rounded-lg"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
                       placeholder="Figuras"
                     />
                   </div>
@@ -431,7 +431,7 @@ export default function InventarioClient({
                       type="text"
                       value={formData.subcategoria || ''}
                       onChange={(e) => setFormData({ ...formData, subcategoria: e.target.value || null })}
-                      className="w-full px-4 py-2 border rounded-lg"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
                       placeholder="Action Figures"
                     />
                   </div>
@@ -443,7 +443,7 @@ export default function InventarioClient({
                       type="text"
                       value={formData.objeto || ''}
                       onChange={(e) => setFormData({ ...formData, objeto: e.target.value || null })}
-                      className="w-full px-4 py-2 border rounded-lg"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
                       placeholder="Superman Classic Action Figure"
                     />
                   </div>
@@ -455,7 +455,7 @@ export default function InventarioClient({
                       type="text"
                       value={formData.condicion || ''}
                       onChange={(e) => setFormData({ ...formData, condicion: e.target.value || null })}
-                      className="w-full px-4 py-2 border rounded-lg"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
                       placeholder="Excelente"
                     />
                   </div>
@@ -467,7 +467,7 @@ export default function InventarioClient({
                       type="number"
                       value={formData.año || ''}
                       onChange={(e) => setFormData({ ...formData, año: e.target.value ? parseInt(e.target.value) : null })}
-                      className="w-full px-4 py-2 border rounded-lg"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
                       placeholder="2020"
                     />
                   </div>
@@ -479,7 +479,7 @@ export default function InventarioClient({
                       type="text"
                       value={formData.rack || ''}
                       onChange={(e) => setFormData({ ...formData, rack: e.target.value || null })}
-                      className="w-full px-4 py-2 border rounded-lg"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
                       placeholder="Rack A"
                     />
                   </div>
@@ -491,7 +491,7 @@ export default function InventarioClient({
                       type="number"
                       value={formData.nivel || ''}
                       onChange={(e) => setFormData({ ...formData, nivel: e.target.value ? parseInt(e.target.value) : null })}
-                      className="w-full px-4 py-2 border rounded-lg"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
                       placeholder="1"
                     />
                   </div>
@@ -503,7 +503,7 @@ export default function InventarioClient({
                       value={formData.comentarios || ''}
                       onChange={(e) => setFormData({ ...formData, comentarios: e.target.value || null })}
                       rows={3}
-                      className="w-full px-4 py-2 border rounded-lg"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
                       placeholder="Notas adicionales..."
                     />
                   </div>
@@ -540,28 +540,28 @@ export default function InventarioClient({
           />
           <div className="fixed top-0 left-0 w-screen h-screen z-[9999] flex items-center justify-center p-4 pointer-events-none">
             <div
-              className="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6 pointer-events-auto"
+              className="bg-white dark:bg-slate-800 rounded-xl shadow-xl max-w-2xl w-full p-6 pointer-events-auto"
               role="dialog"
               aria-modal="true"
               aria-labelledby="split-item-title"
               aria-describedby="split-item-desc"
               tabIndex={-1}
             >
-              <h2 id="split-item-title" className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 id="split-item-title" className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
                 Dividir Item
               </h2>
-              
+
               <div className="mb-4">
-                <p id="split-item-desc" className="text-sm text-slate-600 mb-2">
+                <p id="split-item-desc" className="text-sm text-slate-600 dark:text-slate-400 mb-2">
                   Objeto original:
                 </p>
-                <p className="text-base font-medium text-slate-900 bg-slate-50 p-3 rounded-lg">
+                <p className="text-base font-medium text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-700 p-3 rounded-lg">
                   {splittingItem.objeto || '-'}
                 </p>
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                   Nuevos objetos (uno por línea):
                 </label>
                 <div className="space-y-2">
@@ -576,7 +576,7 @@ export default function InventarioClient({
                         setSplitObjetos(newObjetos)
                       }}
                       placeholder={`Objeto ${index + 1}`}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
+                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
                       autoFocus={index === 0}
                     />
                   ))}
@@ -584,7 +584,7 @@ export default function InventarioClient({
                 <button
                   type="button"
                   onClick={() => setSplitObjetos([...splitObjetos, ''])}
-                  className="mt-2 text-sm text-[#2d5a8a] hover:text-[#1e3a5f] font-medium"
+                  className="mt-2 text-sm text-[#2d5a8a] dark:text-[#6ba3d3] hover:text-[#1e3a5f] dark:hover:text-[#4a7bc8] font-medium"
                 >
                   + Agregar otro objeto
                 </button>
@@ -593,7 +593,7 @@ export default function InventarioClient({
               <div className="flex gap-3 justify-end">
                 <button
                   onClick={closeSplitModal}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                 >
                   Cancelar
                 </button>
@@ -692,13 +692,13 @@ export default function InventarioClient({
               value={filters.search || ''}
               onChange={(e) => handleFilterChange('search', e.target.value)}
               aria-label="Buscar items"
-              className="px-3 py-2 border rounded-lg text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
+              className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm lg:text-base bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
             />
             <select
               value={filters.estado || ''}
               onChange={(e) => handleFilterChange('estado', e.target.value)}
               aria-label="Filtrar por estado"
-              className="px-3 py-2 border rounded-lg text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
+              className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm lg:text-base bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
             >
               <option value="">Todos los estados</option>
               <option value="disponible">Disponible</option>
@@ -710,7 +710,7 @@ export default function InventarioClient({
               value={filters.categoria || ''}
               onChange={(e) => handleFilterChange('categoria', e.target.value)}
               aria-label="Filtrar por categoría"
-              className="px-3 py-2 border rounded-lg text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
+              className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm lg:text-base bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
             >
               <option value="">Todas las categorías</option>
               {categorias.map(c => (
@@ -721,7 +721,7 @@ export default function InventarioClient({
               value={filters.subcategoria || ''}
               onChange={(e) => handleFilterChange('subcategoria', e.target.value)}
               aria-label="Filtrar por subcategoría"
-              className="px-3 py-2 border rounded-lg text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
+              className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm lg:text-base bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
             >
               <option value="">Todas las subcategorías</option>
               {subcategorias.map(s => (
@@ -732,7 +732,7 @@ export default function InventarioClient({
               value={filters.rack || ''}
               onChange={(e) => handleFilterChange('rack', e.target.value)}
               aria-label="Filtrar por rack"
-              className="px-3 py-2 border rounded-lg text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
+              className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm lg:text-base bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
             >
               <option value="">Todos los racks</option>
               {racks.map(r => (
@@ -743,7 +743,7 @@ export default function InventarioClient({
               value={filters.asignado_a || ''}
               onChange={(e) => handleFilterChange('asignado_a', e.target.value)}
               aria-label="Filtrar por vendedor"
-              className="px-3 py-2 border rounded-lg text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
+              className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm lg:text-base bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
             >
               <option value="">Todos los vendedores</option>
               {vendedores.map(v => (
@@ -774,11 +774,11 @@ export default function InventarioClient({
           const assignedUser = item.asignado_a ? usuarios.find(u => u.id === item.asignado_a) : null
           const getStatusColor = (estado: string) => {
             switch (estado) {
-              case 'disponible': return 'bg-green-100 text-green-800'
-              case 'asignado': return 'bg-blue-100 text-blue-800'
-              case 'vendido_pendiente': return 'bg-yellow-100 text-yellow-800'
-              case 'vendido_aprobado': return 'bg-purple-100 text-purple-800'
-              default: return 'bg-gray-100 text-gray-800'
+              case 'disponible': return 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
+              case 'asignado': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300'
+              case 'vendido_pendiente': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'
+              case 'vendido_aprobado': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300'
+              default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
             }
           }
 
@@ -817,7 +817,7 @@ export default function InventarioClient({
                   <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
                     {item.categoria || '-'}
                     {item.subcategoria && (
-                      <span className="text-slate-500"> / {item.subcategoria}</span>
+                      <span className="text-slate-500 dark:text-slate-400"> / {item.subcategoria}</span>
                     )}
                   </p>
                 </div>
@@ -898,11 +898,11 @@ export default function InventarioClient({
             {items.map((item) => {
               const getStatusColor = (estado: string) => {
                 switch (estado) {
-                  case 'disponible': return 'bg-green-100 text-green-800'
-                  case 'asignado': return 'bg-blue-100 text-blue-800'
-                  case 'vendido_pendiente': return 'bg-yellow-100 text-yellow-800'
-                  case 'vendido_aprobado': return 'bg-purple-100 text-purple-800'
-                  default: return 'bg-gray-100 text-gray-800'
+                  case 'disponible': return 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
+                  case 'asignado': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300'
+                  case 'vendido_pendiente': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'
+                  case 'vendido_aprobado': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300'
+                  default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                 }
               }
 
@@ -955,7 +955,7 @@ export default function InventarioClient({
                         aria-label="Dividir"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 20V4M12 4L8 8M12 4l4 4M8 8l-2 2M16 8l2 2" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 20V10M12 10L7 5M12 10l5-5M7 5l-2.5 2.5M17 5l2.5 2.5" />
                         </svg>
                       </button>
                       <button

@@ -125,7 +125,7 @@ export default function VentasClient({ ventas: initialVentas, filters: initialFi
           value={filters.estado || ''}
           onChange={(e) => handleFilterChange('estado', e.target.value)}
           aria-label="Filtrar por estado"
-          className="hidden lg:block px-4 py-2 border rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
+          className="hidden lg:block px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-base bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
         >
           <option value="">Todos los estados</option>
           <option value="pendiente">Pendiente</option>
@@ -163,7 +163,7 @@ export default function VentasClient({ ventas: initialVentas, filters: initialFi
               value={filters.estado || ''}
               onChange={(e) => handleFilterChange('estado', e.target.value)}
               aria-label="Filtrar por estado"
-              className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
+              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2d5a8a]"
             >
               <option value="">Todos los estados</option>
               <option value="pendiente">Pendiente</option>
@@ -179,10 +179,10 @@ export default function VentasClient({ ventas: initialVentas, filters: initialFi
         {ventas.map((venta) => {
           const getStatusColor = (estado: string) => {
             switch (estado) {
-              case 'pendiente': return 'bg-yellow-100 text-yellow-800'
-              case 'aprobada': return 'bg-green-100 text-green-800'
-              case 'rechazada': return 'bg-red-100 text-red-800'
-              default: return 'bg-gray-100 text-gray-800'
+              case 'pendiente': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'
+              case 'aprobada': return 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
+              case 'rechazada': return 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
+              default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
             }
           }
 
@@ -210,7 +210,7 @@ export default function VentasClient({ ventas: initialVentas, filters: initialFi
               <div className="grid grid-cols-2 gap-3 pt-2 border-t border-gray-200 dark:border-slate-700">
                 <div>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Precio</p>
-                  <p className="text-sm font-bold text-[#1e3a5f]">
+                  <p className="text-sm font-bold text-[#1e3a5f] dark:text-[#6ba3d3]">
                     {formatCurrency(venta.precio, venta.moneda)}
                   </p>
                 </div>
@@ -225,7 +225,7 @@ export default function VentasClient({ ventas: initialVentas, filters: initialFi
                     href={venta.evidencia_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-[#2d5a8a] hover:text-[#1e3a5f] underline font-medium"
+                    className="text-sm text-[#2d5a8a] dark:text-[#6ba3d3] hover:text-[#1e3a5f] dark:hover:text-[#4a7bc8] underline font-medium"
                   >
                     Ver evidencia →
                   </a>
@@ -238,7 +238,7 @@ export default function VentasClient({ ventas: initialVentas, filters: initialFi
                   <button
                     onClick={() => handleApprove(venta.venta_id)}
                     disabled={processing === venta.venta_id}
-                    className="flex-1 flex items-center justify-center p-2 bg-green-50 hover:bg-green-100 text-green-700 rounded-lg disabled:opacity-50 transition-colors border border-green-200"
+                    className="flex-1 flex items-center justify-center p-2 bg-green-50 dark:bg-green-900/30 hover:bg-green-100 dark:hover:bg-green-900/50 text-green-700 dark:text-green-400 rounded-lg disabled:opacity-50 transition-colors border border-green-200 dark:border-green-700"
                     title="Aprobar venta"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -248,7 +248,7 @@ export default function VentasClient({ ventas: initialVentas, filters: initialFi
                   <button
                     onClick={() => handleReject(venta.venta_id)}
                     disabled={processing === venta.venta_id}
-                    className="flex-1 flex items-center justify-center p-2 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg disabled:opacity-50 transition-colors border border-red-200"
+                    className="flex-1 flex items-center justify-center p-2 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-700 dark:text-red-400 rounded-lg disabled:opacity-50 transition-colors border border-red-200 dark:border-red-700"
                     title="Rechazar venta"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -287,10 +287,10 @@ export default function VentasClient({ ventas: initialVentas, filters: initialFi
             {ventas.map((venta) => {
               const getStatusColor = (estado: string) => {
                 switch (estado) {
-                  case 'pendiente': return 'bg-yellow-100 text-yellow-800'
-                  case 'aprobada': return 'bg-green-100 text-green-800'
-                  case 'rechazada': return 'bg-red-100 text-red-800'
-                  default: return 'bg-gray-100 text-gray-800'
+                  case 'pendiente': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'
+                  case 'aprobada': return 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
+                  case 'rechazada': return 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
+                  default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                 }
               }
 
@@ -302,7 +302,7 @@ export default function VentasClient({ ventas: initialVentas, filters: initialFi
                   <td className="px-6 py-4 text-sm text-slate-900 dark:text-slate-100">
                     {venta.vendedor?.nombre || '-'}
                   </td>
-                  <td className="px-6 py-4 text-sm font-semibold text-[#1e3a5f]">
+                  <td className="px-6 py-4 text-sm font-semibold text-[#1e3a5f] dark:text-[#6ba3d3]">
                     {formatCurrency(venta.precio, venta.moneda)}
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-900 dark:text-slate-100">
@@ -318,7 +318,7 @@ export default function VentasClient({ ventas: initialVentas, filters: initialFi
                       href={venta.evidencia_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#2d5a8a] hover:text-[#1e3a5f] underline"
+                      className="text-[#2d5a8a] dark:text-[#6ba3d3] hover:text-[#1e3a5f] dark:hover:text-[#4a7bc8] underline"
                     >
                       Ver evidencia
                     </a>
@@ -329,7 +329,7 @@ export default function VentasClient({ ventas: initialVentas, filters: initialFi
                         <button
                           onClick={() => handleApprove(venta.venta_id)}
                           disabled={processing === venta.venta_id}
-                          className="p-2 bg-green-50 hover:bg-green-100 text-green-700 rounded-lg transition-colors border border-green-200 disabled:opacity-50"
+                          className="p-2 bg-green-50 dark:bg-green-900/30 hover:bg-green-100 dark:hover:bg-green-900/50 text-green-700 dark:text-green-400 rounded-lg transition-colors border border-green-200 dark:border-green-700 disabled:opacity-50"
                           title="Aprobar venta"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -339,7 +339,7 @@ export default function VentasClient({ ventas: initialVentas, filters: initialFi
                         <button
                           onClick={() => handleReject(venta.venta_id)}
                           disabled={processing === venta.venta_id}
-                          className="p-2 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg transition-colors border border-red-200 disabled:opacity-50"
+                          className="p-2 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-700 dark:text-red-400 rounded-lg transition-colors border border-red-200 dark:border-red-700 disabled:opacity-50"
                           title="Rechazar venta"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -349,7 +349,7 @@ export default function VentasClient({ ventas: initialVentas, filters: initialFi
                       </div>
                     )}
                     {venta.estado === 'aprobada' && venta.aprobado_por_usuario && (
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-slate-500 dark:text-slate-400">
                         Aprobada por {venta.aprobado_por_usuario.nombre}
                       </span>
                     )}

@@ -23,10 +23,10 @@ export default function RegistrarVentaClient({ item }: RegistrarVentaClientProps
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     // Prevent double submission
     if (submitting) return
-    
+
     setSubmitting(true)
 
     try {
@@ -53,7 +53,7 @@ export default function RegistrarVentaClient({ item }: RegistrarVentaClientProps
       </h1>
 
       <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6 mb-6">
-        <h2 className="text-lg font-semibold mb-4">Item</h2>
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">Item</h2>
         <p className="text-slate-600 dark:text-slate-400">
           <strong>Objeto:</strong> {item.objeto || '-'}
         </p>
@@ -77,7 +77,7 @@ export default function RegistrarVentaClient({ item }: RegistrarVentaClientProps
             value={formData.precio}
             onChange={(e) => setFormData({ ...formData, precio: e.target.value })}
             required
-            className="w-full px-4 py-2 border rounded-lg"
+            className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
           />
         </div>
 
@@ -88,7 +88,7 @@ export default function RegistrarVentaClient({ item }: RegistrarVentaClientProps
           <select
             value={formData.moneda}
             onChange={(e) => setFormData({ ...formData, moneda: e.target.value })}
-            className="w-full px-4 py-2 border rounded-lg"
+            className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
           >
             <option value="MXN">MXN</option>
             <option value="USD">USD</option>
@@ -105,7 +105,8 @@ export default function RegistrarVentaClient({ item }: RegistrarVentaClientProps
             value={formData.fecha_venta}
             onChange={(e) => setFormData({ ...formData, fecha_venta: e.target.value })}
             required
-            className="w-full px-4 py-2 border rounded-lg"
+            className="w-full px-4 py-2 border rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-100 text-center appearance-none"
+            style={{ minHeight: '42px' }}
           />
         </div>
 
@@ -118,7 +119,7 @@ export default function RegistrarVentaClient({ item }: RegistrarVentaClientProps
             value={formData.canal}
             onChange={(e) => setFormData({ ...formData, canal: e.target.value })}
             placeholder="MercadoLibre, eBay, en_persona, etc."
-            className="w-full px-4 py-2 border rounded-lg"
+            className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
           />
         </div>
 
@@ -132,9 +133,9 @@ export default function RegistrarVentaClient({ item }: RegistrarVentaClientProps
             onChange={(e) => setFormData({ ...formData, evidencia_url: e.target.value })}
             required
             placeholder="https://drive.google.com/..."
-            className="w-full px-4 py-2 border rounded-lg"
+            className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
           />
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
             Enlace público de Google Drive con la evidencia de la venta
           </p>
         </div>
@@ -147,7 +148,7 @@ export default function RegistrarVentaClient({ item }: RegistrarVentaClientProps
             value={formData.notas}
             onChange={(e) => setFormData({ ...formData, notas: e.target.value })}
             rows={4}
-            className="w-full px-4 py-2 border rounded-lg"
+            className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
           />
         </div>
 
