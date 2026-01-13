@@ -170,13 +170,13 @@ export default function UsuariosClient({ usuarios: initialUsuarios, currentUserI
                 )}
               </div>
               <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                <span className={`px-2 py-1 rounded text-xs ${usuario.rol === 'admin' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300' :
-                    usuario.rol === 'vendedor' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300' :
-                      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'
+                <span className={`px-2 py-1 rounded text-xs ${usuario.rol === 'admin' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-300' :
+                    usuario.rol === 'vendedor' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300' :
+                      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/60 dark:text-yellow-300'
                   }`}>
                   {usuario.rol}
                 </span>
-                <span className={`px-2 py-1 rounded text-xs ${usuario.activo ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
+                <span className={`px-2 py-1 rounded text-xs ${usuario.activo ? 'bg-green-100 text-green-800 dark:bg-green-900/60 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300'
                   }`}>
                   {usuario.activo ? 'Activo' : 'Inactivo'}
                 </span>
@@ -214,15 +214,15 @@ export default function UsuariosClient({ usuarios: initialUsuarios, currentUserI
                   )}
                 </td>
                 <td className="px-6 py-4 text-sm">
-                  <span className={`px-2 py-1 rounded text-xs ${usuario.rol === 'admin' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300' :
-                      usuario.rol === 'vendedor' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300' :
-                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'
+                  <span className={`px-2 py-1 rounded text-xs ${usuario.rol === 'admin' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-300' :
+                      usuario.rol === 'vendedor' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300' :
+                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/60 dark:text-yellow-300'
                     }`}>
                     {usuario.rol}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm">
-                  <span className={`px-2 py-1 rounded text-xs ${usuario.activo ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
+                  <span className={`px-2 py-1 rounded text-xs ${usuario.activo ? 'bg-green-100 text-green-800 dark:bg-green-900/60 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300'
                     }`}>
                     {usuario.activo ? 'Activo' : 'Inactivo'}
                   </span>

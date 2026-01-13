@@ -73,9 +73,9 @@ export default function VentasClient({ ventas: initialVentas, totalCount: initia
         {ventas.map((venta) => {
           const getStatusColor = (estado: string) => {
             switch (estado) {
-              case 'pendiente': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'
-              case 'aprobada': return 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
-              case 'rechazada': return 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
+              case 'pendiente': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/60 dark:text-yellow-300'
+              case 'aprobada': return 'bg-green-100 text-green-800 dark:bg-green-900/60 dark:text-green-300'
+              case 'rechazada': return 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300'
               default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
             }
           }
@@ -143,9 +143,9 @@ export default function VentasClient({ ventas: initialVentas, totalCount: initia
             {ventas.map((venta) => {
               const getStatusColor = (estado: string) => {
                 switch (estado) {
-                  case 'pendiente': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'
-                  case 'aprobada': return 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
-                  case 'rechazada': return 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
+                  case 'pendiente': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/60 dark:text-yellow-300'
+                  case 'aprobada': return 'bg-green-100 text-green-800 dark:bg-green-900/60 dark:text-green-300'
+                  case 'rechazada': return 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300'
                   default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                 }
               }

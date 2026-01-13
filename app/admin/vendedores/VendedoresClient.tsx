@@ -65,9 +65,9 @@ export default function VendedoresClient({ data }: VendedoresClientProps) {
 
     const getStatusColor = (estado: string) => {
         switch (estado) {
-            case 'pendiente': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'
-            case 'aprobada': return 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
-            case 'rechazada': return 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
+            case 'pendiente': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/60 dark:text-yellow-300'
+            case 'aprobada': return 'bg-green-100 text-green-800 dark:bg-green-900/60 dark:text-green-300'
+            case 'rechazada': return 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300'
             default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
         }
     }
@@ -216,10 +216,10 @@ export default function VendedoresClient({ data }: VendedoresClientProps) {
                             <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                                 {/* Rank and Avatar */}
                                 <div className="flex items-center gap-3">
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${index === 0 ? 'bg-yellow-100 text-yellow-700' :
-                                        index === 1 ? 'bg-slate-200 text-slate-600' :
-                                            index === 2 ? 'bg-amber-100 text-amber-700' :
-                                                'bg-slate-100 text-slate-500'
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${index === 0 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300' :
+                                        index === 1 ? 'bg-slate-200 text-slate-600 dark:bg-slate-600 dark:text-slate-300' :
+                                            index === 2 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300' :
+                                                'bg-slate-100 text-slate-500 dark:bg-slate-600 dark:text-slate-400'
                                         }`}>
                                         {index + 1}
                                     </div>
@@ -230,7 +230,7 @@ export default function VendedoresClient({ data }: VendedoresClientProps) {
                                         <h3 className="font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                                             {vendedor.nombre}
                                             {!vendedor.activo && (
-                                                <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700">
+                                                <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300">
                                                     Inactivo
                                                 </span>
                                             )}
@@ -293,22 +293,22 @@ export default function VendedoresClient({ data }: VendedoresClientProps) {
                             {/* Status Badges */}
                             <div className="flex flex-wrap gap-2 mt-4">
                                 {vendedor.ventasPendientes > 0 && (
-                                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300">
+                                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/60 dark:text-yellow-300">
                                         {vendedor.ventasPendientes} pendiente{vendedor.ventasPendientes !== 1 ? 's' : ''}
                                     </span>
                                 )}
                                 {vendedor.ventasAprobadas > 0 && (
-                                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">
                                         {vendedor.ventasAprobadas} aprobada{vendedor.ventasAprobadas !== 1 ? 's' : ''}
                                     </span>
                                 )}
                                 {vendedor.ventasRechazadas > 0 && (
-                                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300">
                                         {vendedor.ventasRechazadas} rechazada{vendedor.ventasRechazadas !== 1 ? 's' : ''}
                                     </span>
                                 )}
                                 {vendedor.revenuePendientes > 0 && (
-                                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">
                                         {formatCurrency(vendedor.revenuePendientes)} pendiente
                                     </span>
                                 )}
