@@ -124,6 +124,11 @@ function Sidebar({ isOpen, onToggle, isMounted }: SidebarProps) {
         }
       } catch (error) {
         console.error('Error loading user:', error)
+        // Force sign out to clear potentially invalid tokens
+        await supabase.auth.signOut()
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('sidebar_user')
+        }
         if (!isCancelled) {
           setUsuario(null)
         }

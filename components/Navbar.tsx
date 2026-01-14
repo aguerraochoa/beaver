@@ -12,17 +12,26 @@ export default function Navbar() {
 
   useEffect(() => {
     const loadUser = async () => {
-      const {
-        data: { user: authUser },
-      } = await supabase.auth.getUser()
+      try {
+        const {
+          data: { user: authUser },
+          error,
+        } = await supabase.auth.getUser()
 
-      if (authUser) {
-        const { data: usuarioData } = await supabase
-          .from('usuarios')
-          .select('*')
-          .eq('id', authUser.id)
-          .single()
-        setUsuario(usuarioData)
+        if (error) throw error
+
+        if (authUser) {
+          const { data: usuarioData } = await supabase
+            .from('usuarios')
+            .select('*')
+            .eq('id', authUser.id)
+            .single()
+          setUsuario(usuarioData)
+        }
+      } catch (error) {
+        console.error('Error loading user in Navbar:', error)
+        // If the session is invalid, sign out to clear bad state
+        await supabase.auth.signOut()
       }
     }
     loadUser()

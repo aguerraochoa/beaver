@@ -65,7 +65,10 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse
   } catch (error) {
     console.error('Error in middleware:', error)
-    return NextResponse.next()
+    // On error (e.g. invalid refresh token), redirect to login
+    const loginUrl = new URL('/login', request.url)
+    loginUrl.searchParams.set('next', request.nextUrl.pathname + request.nextUrl.search)
+    return NextResponse.redirect(loginUrl)
   }
 }
 

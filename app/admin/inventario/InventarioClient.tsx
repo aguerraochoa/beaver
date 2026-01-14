@@ -143,14 +143,20 @@ export default function InventarioClient({
   const hasMore = items.length < totalCount
 
   const handleSelectAll = () => {
-    if (selectedItems.size === items.length) {
+    const selectableItems = items.filter(i => !i.estado.startsWith('vendido'))
+    const allSelectableAreSelected = selectableItems.length > 0 && selectableItems.every(i => selectedItems.has(i.item_id))
+
+    if (allSelectableAreSelected) {
       setSelectedItems(new Set())
     } else {
-      setSelectedItems(new Set(items.map(i => i.item_id)))
+      setSelectedItems(new Set(selectableItems.map(i => i.item_id)))
     }
   }
 
   const handleSelectItem = (itemId: string) => {
+    const item = items.find(i => i.item_id === itemId)
+    if (!item || item.estado.startsWith('vendido')) return
+
     const newSelected = new Set(selectedItems)
     if (newSelected.has(itemId)) {
       newSelected.delete(itemId)
@@ -827,12 +833,12 @@ export default function InventarioClient({
         <div className="flex items-center gap-2 px-2 py-2 bg-white dark:bg-slate-800 rounded-lg shadow">
           <input
             type="checkbox"
-            checked={selectedItems.size === items.length && items.length > 0}
+            checked={items.filter(i => !i.estado.startsWith('vendido')).length > 0 && items.filter(i => !i.estado.startsWith('vendido')).every(i => selectedItems.has(i.item_id))}
             onChange={handleSelectAll}
             className="w-5 h-5 text-[#2d5a8a] rounded focus:ring-[#2d5a8a]"
           />
           <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Seleccionar todos ({selectedItems.size} seleccionados)
+            Seleccionar disponibles ({selectedItems.size} seleccionados)
           </span>
         </div>
 
@@ -860,7 +866,8 @@ export default function InventarioClient({
                   type="checkbox"
                   checked={selectedItems.has(item.item_id)}
                   onChange={() => handleSelectItem(item.item_id)}
-                  className="w-5 h-5 text-[#2d5a8a] rounded focus:ring-[#2d5a8a] flex-shrink-0 mt-0.5"
+                  disabled={item.estado.startsWith('vendido')}
+                  className={`w-5 h-5 text-[#2d5a8a] rounded focus:ring-[#2d5a8a] flex-shrink-0 mt-0.5 ${item.estado.startsWith('vendido') ? 'opacity-50 cursor-not-allowed' : ''}`}
                 />
 
                 <div className="flex-1 min-w-0" onClick={() => toggleExpanded(item.item_id)}>
@@ -967,7 +974,7 @@ export default function InventarioClient({
               <th className="px-6 py-3 text-left">
                 <input
                   type="checkbox"
-                  checked={selectedItems.size === items.length && items.length > 0}
+                  checked={items.filter(i => !i.estado.startsWith('vendido')).length > 0 && items.filter(i => !i.estado.startsWith('vendido')).every(i => selectedItems.has(i.item_id))}
                   onChange={handleSelectAll}
                   className="w-4 h-4 text-[#2d5a8a] rounded focus:ring-[#2d5a8a]"
                 />
@@ -1000,7 +1007,8 @@ export default function InventarioClient({
                       type="checkbox"
                       checked={selectedItems.has(item.item_id)}
                       onChange={() => handleSelectItem(item.item_id)}
-                      className="w-4 h-4 text-[#2d5a8a] rounded focus:ring-[#2d5a8a]"
+                      disabled={item.estado.startsWith('vendido')}
+                      className={`w-4 h-4 text-[#2d5a8a] rounded focus:ring-[#2d5a8a] ${item.estado.startsWith('vendido') ? 'opacity-50 cursor-not-allowed' : ''}`}
                     />
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-900 dark:text-slate-100">
