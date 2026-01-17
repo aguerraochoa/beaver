@@ -500,11 +500,11 @@ export default function InventarioClient({
                       Año
                     </label>
                     <input
-                      type="number"
+                      type="text"
                       value={formData.año || ''}
-                      onChange={(e) => setFormData({ ...formData, año: e.target.value ? parseInt(e.target.value) : null })}
+                      onChange={(e) => setFormData({ ...formData, año: e.target.value || null })}
                       className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                      placeholder="2020"
+                      placeholder="2020 o VARIOS"
                     />
                   </div>
                   <div>

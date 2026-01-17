@@ -54,18 +54,10 @@ export async function importCSV(rows: CSVRow[]): Promise<{
         normalized.comentarios = row.comentarios?.trim() || null
       }
 
-      // Convert año to integer
+      // Convert año to string (no parsing needs)
       if (row.año !== undefined && row.año !== null && row.año !== '') {
-        const añoNum = typeof row.año === 'string' ? parseInt(row.año.trim(), 10) : row.año
-        if (isNaN(añoNum)) {
-          errors.push({
-            fila,
-            error: `Error al convertir año a número: ${row.año}`,
-            datos: row,
-          })
-          continue
-        }
-        normalized.año = añoNum
+        const añoStr = String(row.año).trim()
+        normalized.año = añoStr
       } else {
         normalized.año = null
       }
@@ -100,29 +92,7 @@ export async function importCSV(rows: CSVRow[]): Promise<{
         continue
       }
 
-      // Check for duplicates (all fields must match)
-      const duplicateKey = JSON.stringify({
-        identificador: normalized.identificador,
-        categoria: normalized.categoria,
-        subcategoria: normalized.subcategoria,
-        objeto: normalized.objeto,
-        condicion: normalized.condicion,
-        año: normalized.año,
-        rack: normalized.rack,
-        nivel: normalized.nivel,
-        comentarios: normalized.comentarios,
-      })
-
-      if (seenRows.has(duplicateKey)) {
-        errors.push({
-          fila,
-          error: `Duplicado: Todos los campos coinciden con una fila anterior (fila ${seenRows.get(duplicateKey)})`,
-          datos: row,
-        })
-        continue
-      }
-
-      seenRows.set(duplicateKey, fila)
+      // Duplicates are allowed per user request, so we just add it
       successItems.push(normalized)
     } catch (error: any) {
       errors.push({

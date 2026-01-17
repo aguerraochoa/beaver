@@ -28,7 +28,7 @@ export interface Item {
   subcategoria: string | null
   objeto: string | null
   condicion: string | null
-  año: number | null
+  año: string | null
   rack: string | null
   nivel: number | null
   comentarios: string | null

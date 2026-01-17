@@ -158,21 +158,30 @@ export default function AdminImportarPage() {
   const handleExportErrors = () => {
     if (!result || result.errors.length === 0) return
 
+    // Helper to escape CSV fields
+    const escapeField = (value: string | number | null | undefined): string => {
+      const stringValue = String(value || '')
+      if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+        return `"${stringValue.replace(/"/g, '""')}"`
+      }
+      return stringValue
+    }
+
     const headers = ['fila', 'error', 'identificador', 'categoria', 'subcategoria', 'objeto', 'condicion', 'año', 'rack', 'nivel', 'comentarios']
     const csvRows = [
       headers.join(','),
       ...result.errors.map(err => [
-        err.fila,
-        `"${err.error.replace(/"/g, '""')}"`,
-        err.datos.identificador || '',
-        err.datos.categoria || '',
-        err.datos.subcategoria || '',
-        err.datos.objeto || '',
-        err.datos.condicion || '',
-        err.datos.año || '',
-        err.datos.rack || '',
-        err.datos.nivel || '',
-        err.datos.comentarios || '',
+        escapeField(err.fila),
+        escapeField(err.error),
+        escapeField(err.datos.identificador),
+        escapeField(err.datos.categoria),
+        escapeField(err.datos.subcategoria),
+        escapeField(err.datos.objeto),
+        escapeField(err.datos.condicion),
+        escapeField(err.datos.año),
+        escapeField(err.datos.rack),
+        escapeField(err.datos.nivel),
+        escapeField(err.datos.comentarios),
       ].join(','))
     ]
 
