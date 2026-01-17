@@ -92,7 +92,7 @@ export default function AdminImportarPage() {
 
     const previewRows: CSVRow[] = []
 
-    for (let i = headerRowIndex + 1; i < Math.min(headerRowIndex + 11, lines.length); i++) {
+    for (let i = headerRowIndex + 1; i < lines.length; i++) {
       const values = parseCSVLine(lines[i])
       const row: CSVRow = {}
       headers.forEach((header, idx) => {
@@ -231,7 +231,7 @@ export default function AdminImportarPage() {
                 {totalItems} items encontrados
               </span>
             </div>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto max-h-96 overflow-y-auto border border-slate-200 dark:border-slate-700 rounded-lg">
               <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
                 <thead className="bg-slate-50 dark:bg-slate-700">
                   <tr>

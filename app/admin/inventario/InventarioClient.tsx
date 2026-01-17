@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createPortal } from 'react-dom'
 import { Item, Usuario } from '@/types/database'
-import { assignItems, createItem, updateItem, deleteItem, splitItem, getItems } from '@/app/actions/items'
+import { assignItems, createItem, updateItem, deleteItem, unassignItems, splitItem, getItems } from '@/app/actions/items'
 import { exportItemsToCSV } from '@/app/actions/csv'
 
 interface InventarioClientProps {
@@ -172,6 +172,24 @@ export default function InventarioClient({
     setAssigning(true)
     try {
       await assignItems(Array.from(selectedItems), selectedVendedor)
+      setSelectedItems(new Set())
+      setShowAssignModal(false)
+      setSelectedVendedor('')
+      router.refresh()
+    } catch (error: any) {
+      alert(`Error: ${error.message}`)
+    } finally {
+      setAssigning(false)
+    }
+  }
+
+  const handleUnassign = async () => {
+    if (selectedItems.size === 0) return
+    if (!confirm(`¿Estás seguro de desasignar ${selectedItems.size} items? Volverán a estado 'disponible'.`)) return
+
+    setAssigning(true)
+    try {
+      await unassignItems(Array.from(selectedItems))
       setSelectedItems(new Set())
       setShowAssignModal(false)
       setSelectedVendedor('')
@@ -371,7 +389,6 @@ export default function InventarioClient({
                 value={selectedVendedor}
                 onChange={(e) => setSelectedVendedor(e.target.value)}
                 className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg mb-4 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                autoFocus
               >
                 <option value="">Seleccionar vendedor</option>
                 {vendedores.map(v => (
@@ -380,11 +397,19 @@ export default function InventarioClient({
               </select>
               <div className="flex gap-3">
                 <button
+                  onClick={handleUnassign}
+                  disabled={assigning}
+                  className="px-4 py-2 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg font-semibold disabled:opacity-50"
+                  title="Desasignar items seleccionados (volver a disponible)"
+                >
+                  Desasignar
+                </button>
+                <button
                   onClick={handleAssign}
                   disabled={!selectedVendedor || assigning}
                   className="flex-1 px-4 py-2 bg-[#2d5a8a] hover:bg-[#1e3a5f] text-white rounded-lg font-semibold disabled:opacity-50"
                 >
-                  {assigning ? 'Asignando...' : 'Asignar'}
+                  {assigning ? 'Procesando...' : 'Asignar'}
                 </button>
                 <button
                   onClick={closeAssignModal}

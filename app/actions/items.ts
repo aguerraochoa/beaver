@@ -379,3 +379,43 @@ export async function splitItem(
   revalidatePath('/admin/inventario')
   return { success: true, count: newItems.length }
 }
+
+export async function unassignItems(itemIds: string[]) {
+  await requireAdmin()
+  const supabase = await createClient()
+
+  // Only unassign items that are currently assigned
+  const { data: items, error: fetchError } = await supabase
+    .from('items')
+    .select('item_id, estado')
+    .in('item_id', itemIds)
+    .eq('estado', 'asignado')
+
+  if (fetchError) {
+    throw new Error(`Error fetching items: ${fetchError.message}`)
+  }
+
+  const validItemIds = items.map(i => i.item_id)
+
+  if (validItemIds.length === 0) {
+    return []
+  }
+
+  const { data, error } = await supabase
+    .from('items')
+    .update({
+      asignado_a: null,
+      asignado_en: null,
+      estado: 'disponible',
+    })
+    .in('item_id', validItemIds)
+    .select()
+
+  if (error) {
+    throw new Error(`Error unassigning items: ${error.message}`)
+  }
+
+  revalidatePath('/admin/inventario')
+  revalidatePath('/vendedor/mis-items')
+  return data as Item[]
+}
