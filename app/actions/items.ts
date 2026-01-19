@@ -71,7 +71,12 @@ export async function getItems(
     query = query.eq('asignado_a', filters.asignado_a)
   }
   if (filters?.search) {
-    query = query.or(`objeto.ilike.%${filters.search}%,identificador.ilike.%${filters.search}%,item_id.eq.${filters.search}`)
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(filters.search)
+    if (isUUID) {
+      query = query.or(`objeto.ilike.%${filters.search}%,identificador.ilike.%${filters.search}%,item_id.eq.${filters.search}`)
+    } else {
+      query = query.or(`objeto.ilike.%${filters.search}%,identificador.ilike.%${filters.search}%`)
+    }
   }
 
   const { data, error, count } = await query.range(from, to)

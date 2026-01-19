@@ -932,6 +932,12 @@ export default function InventarioClient({
               {expandedItems.has(item.item_id) && (
                 <div className="px-4 pb-4 border-t border-gray-100 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-800/50">
                   <div className="grid grid-cols-2 gap-3 pt-3">
+                    <div className="col-span-2">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Objeto</p>
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100 break-words">
+                        {item.objeto || '-'}
+                      </p>
+                    </div>
                     <div>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">ID</p>
                       <p className="text-sm font-medium text-slate-900 dark:text-slate-100 font-mono">
