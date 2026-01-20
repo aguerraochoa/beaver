@@ -60,7 +60,7 @@ export default function RegistrarVentaClient({ item }: RegistrarVentaClientProps
           <div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Objeto</p>
             <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-              {item.objeto || '-'}
+              {item.objeto || '-'}{item.año ? ` / ${item.año}` : ''}
             </p>
           </div>
           <div>
@@ -83,14 +83,7 @@ export default function RegistrarVentaClient({ item }: RegistrarVentaClientProps
               </p>
             </div>
           )}
-          {item.año && (
-            <div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Año</p>
-              <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                {item.año}
-              </p>
-            </div>
-          )}
+
           {(item.rack || item.nivel) && (
             <div>
               <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Ubicación</p>

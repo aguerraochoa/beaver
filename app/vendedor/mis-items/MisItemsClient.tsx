@@ -251,7 +251,7 @@ export default function MisItemsClient({ items: initialItems, filters: initialFi
                   <div className="flex justify-between items-start">
                     <div className="min-w-0">
                       <p className="text-base font-semibold text-slate-900 dark:text-slate-100 truncate">
-                        {item.objeto || '-'}
+                        {item.objeto || '-'}{item.año ? ` / ${item.año}` : ''}
                       </p>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                         {item.categoria || '-'}{item.subcategoria ? ` / ${item.subcategoria}` : ''}
@@ -345,7 +345,7 @@ export default function MisItemsClient({ items: initialItems, filters: initialFi
                     {item.identificador || item.item_id.substring(0, 8)}
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-900 dark:text-slate-100">
-                    {item.objeto || '-'}
+                    {item.objeto || '-'}{item.año ? ` / ${item.año}` : ''}
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-900 dark:text-slate-100">
                     {item.categoria || '-'} {item.subcategoria && `/ ${item.subcategoria}`}

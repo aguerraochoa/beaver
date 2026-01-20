@@ -57,69 +57,50 @@ export default function UsuariosClient({ usuarios: initialUsuarios, currentUserI
   }
 
   const renderActions = (usuario: Usuario) => (
-    <div className="flex items-center gap-2 flex-wrap">
-      {usuario.rol === 'pendiente' && (
-        <>
-          <button
-            onClick={() => handleApprove(usuario.id, 'vendedor')}
-            className="p-2 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-400 rounded-lg transition-colors border border-blue-200 dark:border-blue-700"
-            title="Aprobar como Vendedor"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </button>
-          <button
-            onClick={() => handleApprove(usuario.id, 'admin')}
-            className="p-2 bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-400 rounded-lg transition-colors border border-purple-200 dark:border-purple-700"
-            title="Aprobar como Admin"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            </svg>
-          </button>
-        </>
-      )}
-      {usuario.rol === 'vendedor' && (
-        <button
-          onClick={() => handleChangeRole(usuario.id, 'admin')}
-          className="p-2 bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-400 rounded-lg transition-colors border border-purple-200 dark:border-purple-700"
-          title="Promover a Admin"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-          </svg>
-        </button>
-      )}
-      {usuario.rol === 'admin' && usuario.id !== currentUserId && (
-        <button
-          onClick={() => handleChangeRole(usuario.id, 'vendedor')}
-          className="p-2 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-400 rounded-lg transition-colors border border-blue-200 dark:border-blue-700"
-          title="Cambiar a Vendedor"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-      )}
+    <div className="flex items-center gap-2">
+      {/* Vendedor Role Toggle */}
+      <button
+        onClick={() => usuario.rol !== 'vendedor' && (usuario.rol === 'pendiente' ? handleApprove(usuario.id, 'vendedor') : handleChangeRole(usuario.id, 'vendedor'))}
+        disabled={usuario.rol === 'vendedor'}
+        className={`p-2 rounded-lg transition-colors border ${usuario.rol === 'vendedor'
+          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300 border-blue-200 dark:border-blue-700 cursor-default'
+          : 'bg-white text-slate-400 border-slate-200 hover:border-blue-300 hover:text-blue-600 dark:bg-slate-800 dark:text-slate-500 dark:border-slate-700 dark:hover:border-blue-700 dark:hover:text-blue-400'
+          }`}
+        title={usuario.rol === 'vendedor' ? 'Usuario es Vendedor' : 'Asignar como Vendedor'}
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+      </button>
+
+      {/* Admin Role Toggle */}
+      <button
+        onClick={() => usuario.rol !== 'admin' && (usuario.rol === 'pendiente' ? handleApprove(usuario.id, 'admin') : handleChangeRole(usuario.id, 'admin'))}
+        disabled={usuario.rol === 'admin'}
+        className={`p-2 rounded-lg transition-colors border ${usuario.rol === 'admin'
+          ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-300 border-purple-200 dark:border-purple-700 cursor-default'
+          : 'bg-white text-slate-400 border-slate-200 hover:border-purple-300 hover:text-purple-600 dark:bg-slate-800 dark:text-slate-500 dark:border-slate-700 dark:hover:border-purple-700 dark:hover:text-purple-400'
+          }`}
+        title={usuario.rol === 'admin' ? 'Usuario es Admin' : 'Asignar como Admin'}
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+      </button>
+
+      {/* Active/Inactive Toggle */}
       {usuario.id !== currentUserId && (
         <button
           onClick={() => handleToggleActivo(usuario.id)}
           className={`p-2 rounded-lg transition-colors border ${usuario.activo
-              ? 'bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-700 dark:text-red-400 border-red-200 dark:border-red-700'
-              : 'bg-green-50 dark:bg-green-900/30 hover:bg-green-100 dark:hover:bg-green-900/50 text-green-700 dark:text-green-400 border-green-200 dark:border-green-700'
+            ? 'bg-white text-slate-400 border-slate-200 hover:border-red-300 hover:text-red-600 dark:bg-slate-800 dark:text-slate-500 dark:border-slate-700 dark:hover:border-red-700 dark:hover:text-red-400'
+            : 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300 border-red-200 dark:border-red-700'
             }`}
           title={usuario.activo ? 'Desactivar usuario' : 'Activar usuario'}
         >
-          {usuario.activo ? (
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-            </svg>
-          ) : (
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          )}
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+          </svg>
         </button>
       )}
     </div>
@@ -171,8 +152,8 @@ export default function UsuariosClient({ usuarios: initialUsuarios, currentUserI
               </div>
               <div className="flex flex-col items-end gap-2 flex-shrink-0">
                 <span className={`px-2 py-1 rounded text-xs ${usuario.rol === 'admin' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-300' :
-                    usuario.rol === 'vendedor' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300' :
-                      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/60 dark:text-yellow-300'
+                  usuario.rol === 'vendedor' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300' :
+                    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/60 dark:text-yellow-300'
                   }`}>
                   {usuario.rol}
                 </span>
@@ -215,8 +196,8 @@ export default function UsuariosClient({ usuarios: initialUsuarios, currentUserI
                 </td>
                 <td className="px-6 py-4 text-sm">
                   <span className={`px-2 py-1 rounded text-xs ${usuario.rol === 'admin' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-300' :
-                      usuario.rol === 'vendedor' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300' :
-                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/60 dark:text-yellow-300'
+                    usuario.rol === 'vendedor' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300' :
+                      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/60 dark:text-yellow-300'
                     }`}>
                     {usuario.rol}
                   </span>

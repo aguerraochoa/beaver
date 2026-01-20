@@ -76,7 +76,7 @@ export async function getVendedorStats(): Promise<VendedoresPageData> {
       fecha_venta,
       estado,
       creado_en,
-      item:items(objeto)
+      item:items(objeto, "año")
     `)
         .order('creado_en', { ascending: false })
 
@@ -141,7 +141,7 @@ export async function getVendedorStats(): Promise<VendedoresPageData> {
             moneda: v.moneda,
             fecha_venta: v.fecha_venta,
             estado: v.estado,
-            item_objeto: v.item?.objeto || null,
+            item_objeto: v.item ? (v.item.año ? `${v.item.objeto} / ${v.item.año}` : v.item.objeto) : null,
         }))
 
         return {

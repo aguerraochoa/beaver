@@ -9,19 +9,19 @@ export interface DashboardStats {
   itemsDisponibles: number
   itemsAsignados: number
   itemsVendidos: number
-  
+
   // Sales stats
   ventasPendientes: number
   ventasAprobadas: number
   ventasRechazadas: number
   totalVentas: number
-  
+
   // Money stats
   totalRevenue: number
   revenueAprobadas: number
   revenuePendientes: number
   averageSalePrice: number
-  
+
   // Seller stats
   topSellers: Array<{
     vendedor_id: string
@@ -30,7 +30,7 @@ export interface DashboardStats {
     totalRevenue: number
     ventasAprobadas: number
   }>
-  
+
   // Recent activity
   recentSales: Array<{
     venta_id: string
@@ -41,7 +41,7 @@ export interface DashboardStats {
     vendedor_nombre: string
     item_objeto: string | null
   }>
-  
+
   // Monthly revenue (last 6 months)
   monthlyRevenue: Array<{
     month: string
@@ -149,7 +149,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       fecha_venta,
       estado,
       vendedor:usuarios!ventas_vendedor_id_fkey(nombre),
-      item:items(objeto)
+      item:items(objeto, "año")
     `)
     .order('creado_en', { ascending: false })
     .limit(10)
@@ -161,7 +161,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     fecha_venta: v.fecha_venta,
     estado: v.estado,
     vendedor_nombre: v.vendedor?.nombre || 'Unknown',
-    item_objeto: v.item?.objeto || null,
+    item_objeto: v.item ? (v.item.año ? `${v.item.objeto} / ${v.item.año}` : v.item.objeto) : null,
   })) || []
 
   // Get monthly revenue (last 6 months) - use fecha_venta instead of creado_en
@@ -180,11 +180,11 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     // Use fecha_venta (sale date) instead of creado_en (creation date)
     const date = new Date(venta.fecha_venta)
     const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
-    
+
     if (!monthlyMap.has(monthKey)) {
       monthlyMap.set(monthKey, { revenue: 0, count: 0 })
     }
-    
+
     const monthData = monthlyMap.get(monthKey)!
     monthData.revenue += Number(venta.precio)
     monthData.count++

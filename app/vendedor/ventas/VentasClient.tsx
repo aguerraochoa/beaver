@@ -107,7 +107,7 @@ export default function VentasClient({ ventas: initialVentas, totalCount: initia
                   <div className="flex justify-between items-start">
                     <div className="min-w-0">
                       <p className="text-base font-semibold text-slate-900 dark:text-slate-100 truncate">
-                        {venta.item?.objeto || venta.item?.identificador || venta.item_id.substring(0, 8)}
+                        {venta.item?.objeto || venta.item?.identificador || venta.item_id.substring(0, 8)}{venta.item?.año ? ` / ${venta.item.año}` : ''}
                       </p>
                       <p className="text-xs font-bold text-[#1e3a5f] dark:text-[#6ba3d3] mt-0.5">
                         {formatCurrency(venta.precio, venta.moneda)}
@@ -190,7 +190,7 @@ export default function VentasClient({ ventas: initialVentas, totalCount: initia
               return (
                 <tr key={venta.venta_id} className="hover:bg-slate-50 dark:hover:bg-slate-700">
                   <td className="px-6 py-4 text-sm text-slate-900 dark:text-slate-100">
-                    {venta.item?.objeto || venta.item?.identificador || venta.item_id.substring(0, 8)}
+                    {venta.item?.objeto || venta.item?.identificador || venta.item_id.substring(0, 8)}{venta.item?.año ? ` / ${venta.item.año}` : ''}
                   </td>
                   <td className="px-6 py-4 text-sm font-semibold text-[#1e3a5f] dark:text-[#6ba3d3]">
                     {formatCurrency(venta.precio, venta.moneda)}
