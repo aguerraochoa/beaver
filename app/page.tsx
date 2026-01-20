@@ -15,6 +15,8 @@ export default async function HomePage() {
     redirect('/admin/dashboard')
   } else if (user.usuario.rol === 'vendedor') {
     redirect('/vendedor/mis-items')
+  } else if (user.usuario.rol === 'subadmin') {
+    redirect('/subadmin/inventario')
   } else if (user.usuario.rol === 'pendiente') {
     redirect('/pendiente')
   }

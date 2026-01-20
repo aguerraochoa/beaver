@@ -1,6 +1,6 @@
 'use server'
 
-import { requireAdmin } from '@/lib/utils/auth'
+import { requireInventoryAccess } from '@/lib/utils/auth'
 import { createClient } from '@/lib/supabase/server'
 import { CSVRow, CSVImportError } from '@/types/database'
 import { revalidatePath } from 'next/cache'
@@ -9,7 +9,7 @@ export async function importCSV(rows: CSVRow[]): Promise<{
   success: number
   errors: CSVImportError[]
 }> {
-  await requireAdmin()
+  await requireInventoryAccess()
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -115,6 +115,7 @@ export async function importCSV(rows: CSVRow[]): Promise<{
   }
 
   revalidatePath('/admin/inventario')
+  revalidatePath('/subadmin/inventario')
   return {
     success: successItems.length,
     errors,
@@ -132,7 +133,7 @@ export async function exportItemsToCSV(filters?: {
   asignado_a?: string
   search?: string
 }): Promise<string> {
-  await requireAdmin()
+  await requireInventoryAccess()
   const supabase = await createClient()
 
   let query = supabase

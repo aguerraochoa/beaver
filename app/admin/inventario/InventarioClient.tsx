@@ -20,6 +20,7 @@ interface InventarioClientProps {
     condiciones: string[]
     años: number[]
   }
+  isSubadmin?: boolean
 }
 
 export default function InventarioClient({
@@ -29,6 +30,7 @@ export default function InventarioClient({
   totalCount: initialTotalCount,
   pageSize,
   filterOptions,
+  isSubadmin = false,
 }: InventarioClientProps) {
   const router = useRouter()
   const [items, setItems] = useState<Item[]>(initialItems)
@@ -69,8 +71,7 @@ export default function InventarioClient({
   }, [initialItems, initialTotalCount, initialFilters])
 
   const { categorias, subcategorias, racks } = filterOptions
-
-  const basePath = '/admin/inventario'
+  const basePath = isSubadmin ? '/subadmin/inventario' : '/admin/inventario'
 
   const updateSearchParams = useCallback((mutate: (params: URLSearchParams) => void) => {
     const params = new URLSearchParams(window.location.search)
@@ -703,7 +704,7 @@ export default function InventarioClient({
             </svg>
             <span>Exportar CSV</span>
           </button>
-          {selectedItems.size > 0 && (
+          {selectedItems.size > 0 && !isSubadmin && (
             <button
               onClick={() => setShowAssignModal(true)}
               className="flex items-center justify-center gap-2 px-3 lg:px-4 py-2 bg-[#1e3a5f] hover:bg-[#0f1e3a] text-white rounded-lg font-semibold transition-colors"

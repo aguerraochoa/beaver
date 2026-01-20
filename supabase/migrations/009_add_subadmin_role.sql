@@ -23,5 +23,10 @@ CREATE POLICY "Subadmin full access on items"
   USING (is_subadmin(auth.uid()))
   WITH CHECK (is_subadmin(auth.uid()));
 
--- Note: Subadmin does NOT get access to usuarios or ventas tables by default
--- They are restricted to Inventory management only.
+-- Add RLS policy for subadmin to read own user record
+-- This is critical for role checks to work
+CREATE POLICY "Subadmin read own usuario"
+  ON usuarios
+  FOR SELECT
+  TO authenticated
+  USING (id = auth.uid());

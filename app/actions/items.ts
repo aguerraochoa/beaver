@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { requireAuth, requireAdmin, requireInventoryAccess } from '@/lib/utils/auth'
+import { requireAuth, requireAdmin, requireInventoryAccess, isSubadmin } from '@/lib/utils/auth'
 import { Item } from '@/types/database'
 import { revalidatePath } from 'next/cache'
 
@@ -25,6 +25,7 @@ export async function getItems(
   await requireAuth()
   const supabase = await createClient()
   const isAdmin = await requireAdmin().then(() => true).catch(() => false)
+  const isSubadminUser = await isSubadmin().then(() => true).catch(() => false)
 
   const limit = pagination?.limit ?? 25
   const offset = pagination?.offset ?? 0
@@ -41,7 +42,8 @@ export async function getItems(
     .order('creado_en', { ascending: false })
 
   // Apply RLS: vendedores only see assigned items
-  if (!isAdmin) {
+  // Admins and Subadmins see all items
+  if (!isAdmin && !isSubadminUser) {
     const { data: { user } } = await supabase.auth.getUser()
     query = query.eq('asignado_a', user?.id)
   }
@@ -89,7 +91,7 @@ export async function getItems(
 }
 
 export async function getItemFilterOptions() {
-  await requireAdmin()
+  await requireInventoryAccess()
   const supabase = await createClient()
 
   const { data, error } = await supabase
@@ -173,6 +175,7 @@ export async function getItemById(itemId: string) {
   await requireAuth()
   const supabase = await createClient()
   const isAdmin = await requireAdmin().then(() => true).catch(() => false)
+  const isSubadminUser = await isSubadmin().then(() => true).catch(() => false)
 
   let query = supabase
     .from('items')
@@ -191,7 +194,7 @@ export async function getItemById(itemId: string) {
   }
 
   // Check RLS: vendedores can only see assigned items
-  if (!isAdmin && data.asignado_a !== (await supabase.auth.getUser()).data.user?.id) {
+  if (!isAdmin && !isSubadminUser && data.asignado_a !== (await supabase.auth.getUser()).data.user?.id) {
     throw new Error('Unauthorized')
   }
 
@@ -218,6 +221,7 @@ export async function createItem(item: Partial<Item>) {
   }
 
   revalidatePath('/admin/inventario')
+  revalidatePath('/subadmin/inventario')
   return data as Item
 }
 
@@ -259,6 +263,7 @@ export async function updateItem(itemId: string, updates: Partial<Item>) {
   }
 
   revalidatePath('/admin/inventario')
+  revalidatePath('/subadmin/inventario')
   revalidatePath('/vendedor/mis-items')
   return data as Item
 }
@@ -295,6 +300,7 @@ export async function assignItems(itemIds: string[], vendedorId: string) {
   }
 
   revalidatePath('/admin/inventario')
+  revalidatePath('/subadmin/inventario')
   revalidatePath('/vendedor/mis-items')
   return data as Item[]
 }
@@ -313,6 +319,7 @@ export async function deleteItem(itemId: string) {
   }
 
   revalidatePath('/admin/inventario')
+  revalidatePath('/subadmin/inventario')
 }
 
 export async function splitItem(
@@ -383,6 +390,7 @@ export async function splitItem(
   }
 
   revalidatePath('/admin/inventario')
+  revalidatePath('/subadmin/inventario')
   return { success: true, count: newItems.length }
 }
 
@@ -422,6 +430,7 @@ export async function unassignItems(itemIds: string[]) {
   }
 
   revalidatePath('/admin/inventario')
+  revalidatePath('/subadmin/inventario')
   revalidatePath('/vendedor/mis-items')
   return data as Item[]
 }

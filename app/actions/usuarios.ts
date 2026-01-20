@@ -2,12 +2,12 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service'
-import { requireAdmin } from '@/lib/utils/auth'
+import { requireAdmin, requireInventoryAccess } from '@/lib/utils/auth'
 import { Usuario, Rol } from '@/types/database'
 import { revalidatePath } from 'next/cache'
 
 export async function getUsuarios(pagination?: { offset?: number; limit?: number }) {
-  await requireAdmin()
+  await requireInventoryAccess()
   const supabase = await createClient()
 
   const limit = pagination?.limit ?? 25

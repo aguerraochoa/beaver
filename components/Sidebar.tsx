@@ -167,7 +167,7 @@ function Sidebar({ isOpen, onToggle, isMounted }: SidebarProps) {
       ]
     } else if (usuario.rol === 'subadmin') {
       return [
-        { href: '/admin/inventario', label: 'Inventario', icon: 'inventory', group: 'main' },
+        { href: '/subadmin/inventario', label: 'Inventario', icon: 'inventory', group: 'main' },
       ]
     } else if (usuario.rol === 'vendedor') {
       return [
