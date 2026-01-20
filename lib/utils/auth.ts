@@ -38,6 +38,11 @@ export async function isAdmin(): Promise<boolean> {
   return role === 'admin'
 }
 
+export async function isSubadmin(): Promise<boolean> {
+  const role = await getUserRole()
+  return role === 'subadmin'
+}
+
 export async function isVendedor(): Promise<boolean> {
   const role = await getUserRole()
   return role === 'vendedor'
@@ -47,6 +52,14 @@ export async function requireAdmin() {
   const isUserAdmin = await isAdmin()
   if (!isUserAdmin) {
     throw new Error('Unauthorized: Admin access required')
+  }
+}
+
+export async function requireInventoryAccess() {
+  const role = await getUserRole()
+  // Both admin and subadmin can access inventory
+  if (role !== 'admin' && role !== 'subadmin') {
+    throw new Error('Unauthorized: Inventory access required')
   }
 }
 

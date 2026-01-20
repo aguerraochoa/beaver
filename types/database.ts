@@ -1,6 +1,6 @@
 // Database types based on the schema
 
-export type Rol = 'admin' | 'vendedor' | 'pendiente'
+export type Rol = 'admin' | 'subadmin' | 'vendedor' | 'pendiente'
 export type EstadoItem = 'disponible' | 'asignado' | 'vendido_pendiente' | 'vendido_aprobado'
 export type EstadoVenta = 'pendiente' | 'aprobada' | 'rechazada'
 

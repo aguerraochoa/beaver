@@ -33,7 +33,7 @@ export default function UsuariosClient({ usuarios: initialUsuarios, currentUserI
     }
   }
 
-  const handleApprove = async (usuarioId: string, rol: 'vendedor' | 'admin') => {
+  const handleApprove = async (usuarioId: string, rol: 'vendedor' | 'admin' | 'subadmin') => {
     try {
       const updated = await updateUsuario(usuarioId, { rol })
       setUsuarios(usuarios.map(u => u.id === usuarioId ? updated : u))
@@ -43,7 +43,7 @@ export default function UsuariosClient({ usuarios: initialUsuarios, currentUserI
     }
   }
 
-  const handleChangeRole = async (usuarioId: string, newRol: 'vendedor' | 'admin') => {
+  const handleChangeRole = async (usuarioId: string, newRol: 'vendedor' | 'admin' | 'subadmin') => {
     if (!confirm(`¿Estás seguro de cambiar el rol a ${newRol}?`)) {
       return
     }
@@ -70,6 +70,21 @@ export default function UsuariosClient({ usuarios: initialUsuarios, currentUserI
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+      </button>
+
+      {/* Subadmin Role Toggle */}
+      <button
+        onClick={() => usuario.rol !== 'subadmin' && (usuario.rol === 'pendiente' ? handleApprove(usuario.id, 'subadmin') : handleChangeRole(usuario.id, 'subadmin'))}
+        disabled={usuario.rol === 'subadmin'}
+        className={`p-2 rounded-lg transition-colors border ${usuario.rol === 'subadmin'
+          ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/60 dark:text-orange-300 border-orange-200 dark:border-orange-700 cursor-default'
+          : 'bg-white text-slate-400 border-slate-200 hover:border-orange-300 hover:text-orange-600 dark:bg-slate-800 dark:text-slate-500 dark:border-slate-700 dark:hover:border-orange-700 dark:hover:text-orange-400'
+          }`}
+        title={usuario.rol === 'subadmin' ? 'Usuario es Subadmin' : 'Asignar como Subadmin'}
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
         </svg>
       </button>
 

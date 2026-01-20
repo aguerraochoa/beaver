@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { requireAuth, requireAdmin } from '@/lib/utils/auth'
+import { requireAuth, requireAdmin, requireInventoryAccess } from '@/lib/utils/auth'
 import { Item } from '@/types/database'
 import { revalidatePath } from 'next/cache'
 
@@ -199,7 +199,7 @@ export async function getItemById(itemId: string) {
 }
 
 export async function createItem(item: Partial<Item>) {
-  await requireAdmin()
+  await requireInventoryAccess()
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -225,9 +225,10 @@ export async function updateItem(itemId: string, updates: Partial<Item>) {
   await requireAuth()
   const supabase = await createClient()
   const isAdmin = await requireAdmin().then(() => true).catch(() => false)
+  const isSubadmin = await requireInventoryAccess().then(() => true).catch(() => false)
 
   // Vendedores can only update certain fields
-  if (!isAdmin) {
+  if (!isAdmin && !isSubadmin) {
     const { data: { user } } = await supabase.auth.getUser()
     // Check if item is assigned to user
     const { data: item } = await supabase
@@ -299,7 +300,7 @@ export async function assignItems(itemIds: string[], vendedorId: string) {
 }
 
 export async function deleteItem(itemId: string) {
-  await requireAdmin()
+  await requireInventoryAccess()
   const supabase = await createClient()
 
   const { error } = await supabase
@@ -318,7 +319,7 @@ export async function splitItem(
   itemId: string,
   newObjetos: string[] // Array de nuevos objetos
 ) {
-  await requireAdmin()
+  await requireInventoryAccess()
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 

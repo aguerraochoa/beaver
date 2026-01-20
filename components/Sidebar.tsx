@@ -165,6 +165,10 @@ function Sidebar({ isOpen, onToggle, isMounted }: SidebarProps) {
         { href: '/admin/vendedores', label: 'Vendedores', icon: 'sellers', group: 'main' },
         { href: '/admin/ventas', label: 'Ventas', icon: 'sales', group: 'main' },
       ]
+    } else if (usuario.rol === 'subadmin') {
+      return [
+        { href: '/admin/inventario', label: 'Inventario', icon: 'inventory', group: 'main' },
+      ]
     } else if (usuario.rol === 'vendedor') {
       return [
         { href: '/vendedor/mis-items', label: 'Mis Items', icon: 'items', group: 'main' },
