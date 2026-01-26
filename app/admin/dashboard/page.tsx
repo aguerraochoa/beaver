@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
 import { getCurrentUser, requireAdmin } from '@/lib/utils/auth'
 import { getDashboardStats } from '@/app/actions/stats'
-import Layout from '@/components/Layout'
 import DashboardClient from './DashboardClient'
 
 export const dynamic = 'force-dynamic'
@@ -21,7 +20,7 @@ export default async function AdminDashboardPage() {
   const stats = await getDashboardStats()
 
   return (
-    <Layout>
+    <>
       <div className="mb-4 lg:mb-6">
         <h1 className="text-2xl lg:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-1 lg:mb-2">
           Dashboard
@@ -31,7 +30,7 @@ export default async function AdminDashboardPage() {
         </p>
       </div>
       <DashboardClient stats={stats} />
-    </Layout>
+    </>
   )
 }
 

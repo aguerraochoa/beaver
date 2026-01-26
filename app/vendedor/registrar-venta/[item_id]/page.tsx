@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/utils/auth'
 import { getItemById } from '@/app/actions/items'
-import Layout from '@/components/Layout'
 import RegistrarVentaClient from './RegistrarVentaClient'
 
 export default async function RegistrarVentaPage({
@@ -27,9 +26,7 @@ export default async function RegistrarVentaPage({
     }
 
     return (
-      <Layout>
-        <RegistrarVentaClient item={item} />
-      </Layout>
+      <RegistrarVentaClient item={item} />
     )
   } catch (error) {
     redirect('/vendedor/mis-items')

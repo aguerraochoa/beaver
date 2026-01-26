@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation'
 import { getCurrentUser, requireInventoryAccess } from '@/lib/utils/auth'
 import { getItems, getItemFilterOptions } from '@/app/actions/items'
 import { getUsuarios } from '@/app/actions/usuarios'
-import Layout from '@/components/Layout'
 import InventarioClient from '@/app/admin/inventario/InventarioClient'
 
 export const dynamic = 'force-dynamic'
@@ -49,16 +48,14 @@ export default async function SubadminInventarioPage({
     ])
 
     return (
-        <Layout>
-            <InventarioClient
-                items={items}
-                usuarios={usuarios}
-                filters={filters}
-                totalCount={count}
-                pageSize={pageSize}
-                filterOptions={filterOptions}
-                isSubadmin={true}
-            />
-        </Layout>
+        <InventarioClient
+            items={items}
+            usuarios={usuarios}
+            filters={filters}
+            totalCount={count}
+            pageSize={pageSize}
+            filterOptions={filterOptions}
+            isSubadmin={true}
+        />
     )
 }

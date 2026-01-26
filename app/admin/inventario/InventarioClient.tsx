@@ -6,6 +6,7 @@ import { createPortal } from 'react-dom'
 import { Item, Usuario } from '@/types/database'
 import { assignItems, createItem, updateItem, deleteItem, unassignItems, splitItem, getItems } from '@/app/actions/items'
 import { exportItemsToCSV } from '@/app/actions/csv'
+import { SkeletonTable } from '@/components/ui/Skeleton'
 
 interface InventarioClientProps {
   items: Item[]
@@ -1106,13 +1107,14 @@ export default function InventarioClient({
 
       {/* Load More */}
       {hasMore && (
-        <div className="flex justify-center bg-white dark:bg-slate-800 rounded-lg lg:rounded-xl shadow px-4 py-3">
+        <div className="flex flex-col gap-4 bg-white dark:bg-slate-800 rounded-lg lg:rounded-xl shadow px-4 py-6">
+          {loadingMore && <SkeletonTable rows={3} />}
           <button
             onClick={handleLoadMore}
             disabled={loadingMore}
-            className="px-6 py-2 bg-[#2d5a8a] hover:bg-[#1e3a5f] text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full sm:w-auto self-center px-8 py-2.5 bg-[#2d5a8a] hover:bg-[#1e3a5f] text-white rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md active:scale-95"
           >
-            {loadingMore ? 'Cargando...' : `Cargar más (${items.length} de ${totalCount})`}
+            {loadingMore ? 'Cargando más items...' : `Cargar más (${items.length} de ${totalCount})`}
           </button>
         </div>
       )}

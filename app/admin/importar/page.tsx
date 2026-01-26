@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { importCSV } from '@/app/actions/csv'
 import { CSVRow, CSVImportError } from '@/types/database'
-import Layout from '@/components/Layout'
 
 export const dynamic = 'force-dynamic'
 
@@ -197,7 +196,7 @@ export default function AdminImportarPage() {
   }
 
   return (
-    <Layout>
+    <>
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
           Importar CSV
@@ -290,7 +289,7 @@ export default function AdminImportarPage() {
           </div>
         )}
       </div>
-    </Layout>
+    </>
   )
 }
 

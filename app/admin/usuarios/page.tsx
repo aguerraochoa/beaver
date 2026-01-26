@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
 import { getCurrentUser, requireAdmin } from '@/lib/utils/auth'
 import { getUsuarios } from '@/app/actions/usuarios'
-import Layout from '@/components/Layout'
 import UsuariosClient from './UsuariosClient'
 
 export const dynamic = 'force-dynamic'
@@ -27,13 +26,11 @@ export default async function AdminUsuariosPage({
   const { usuarios, count } = await getUsuarios({ offset: 0, limit: pageSize })
 
   return (
-    <Layout>
-      <UsuariosClient
-        usuarios={usuarios}
-        currentUserId={user.id}
-        totalCount={count}
-        pageSize={pageSize}
-      />
-    </Layout>
+    <UsuariosClient
+      usuarios={usuarios}
+      currentUserId={user.id}
+      totalCount={count}
+      pageSize={pageSize}
+    />
   )
 }

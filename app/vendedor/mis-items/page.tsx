@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/utils/auth'
 import { getItems, getVendorFilterOptions } from '@/app/actions/items'
-import Layout from '@/components/Layout'
 import MisItemsClient from './MisItemsClient'
 
 export const dynamic = 'force-dynamic'
@@ -36,14 +35,12 @@ export default async function VendedorMisItemsPage({
   const { items, count } = await getItems(filters, { offset: 0, limit: pageSize })
 
   return (
-    <Layout>
-      <MisItemsClient
-        items={items}
-        filters={filters}
-        totalCount={count}
-        pageSize={pageSize}
-        filterOptions={filterOptions}
-      />
-    </Layout>
+    <MisItemsClient
+      items={items}
+      filters={filters}
+      totalCount={count}
+      pageSize={pageSize}
+      filterOptions={filterOptions}
+    />
   )
 }
