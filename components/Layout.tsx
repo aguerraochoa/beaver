@@ -4,7 +4,13 @@ import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import Sidebar from './Sidebar'
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({
+  children,
+  initialUser
+}: {
+  children: React.ReactNode,
+  initialUser?: any
+}) {
   const pathname = usePathname()
 
   // Mobile sidebar open state - only used for mobile overlay behavior
@@ -31,6 +37,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         isOpen={sidebarOpen}
         onToggle={handleToggle}
         isMounted={isMounted}
+        initialUser={initialUser}
       />
 
       {/* Main content area */}

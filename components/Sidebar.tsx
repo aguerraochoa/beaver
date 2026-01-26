@@ -17,17 +17,18 @@ interface SidebarProps {
   isOpen: boolean
   onToggle: () => void
   isMounted: boolean
+  initialUser?: any
 }
 
-function Sidebar({ isOpen, onToggle, isMounted }: SidebarProps) {
+function Sidebar({ isOpen, onToggle, isMounted, initialUser }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = useMemo(() => createClient(), [])
   const sidebarRef = useRef<HTMLElement>(null)
 
-  // Initialize state - must match server render (no localStorage access)
-  const [usuario, setUsuario] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  // Initialize state - use initialUser for SSR and immediate hydration
+  const [usuario, setUsuario] = useState<any>(initialUser || null)
+  const [isLoading, setIsLoading] = useState(!initialUser)
 
   useEffect(() => {
     // Immediately load from localStorage to show menu items right away

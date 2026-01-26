@@ -1,6 +1,8 @@
 import React from 'react';
 import Layout from '@/components/Layout';
+import { getCurrentUser } from '@/lib/utils/auth';
 
-export default function VendedorLayout({ children }: { children: React.ReactNode }) {
-    return <Layout>{children}</Layout>;
+export default async function VendedorLayout({ children }: { children: React.ReactNode }) {
+    const user = await getCurrentUser();
+    return <Layout initialUser={user?.usuario}>{children}</Layout>;
 }

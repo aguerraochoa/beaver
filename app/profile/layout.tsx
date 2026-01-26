@@ -2,7 +2,7 @@ import React from 'react';
 import Layout from '@/components/Layout';
 import { getCurrentUser } from '@/lib/utils/auth';
 
-export default async function SubadminLayout({ children }: { children: React.ReactNode }) {
+export default async function ProfileLayout({ children }: { children: React.ReactNode }) {
     const user = await getCurrentUser();
     return <Layout initialUser={user?.usuario}>{children}</Layout>;
 }
